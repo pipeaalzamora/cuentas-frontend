@@ -1,0 +1,477 @@
+/* ============================================================
+   CALCULADOR DE SUEÑOS — OLED Dark + Neon
+   ============================================================ */
+
+.calculador-suenos {
+  padding: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  animation: fadeInUp 0.4s ease;
+}
+
+/* Header */
+.calculador-suenos__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.calculador-suenos__header-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22C55E;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+}
+
+.calculador-suenos__header-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.calculador-suenos__header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.calculador-suenos__header p {
+  font-size: 0.875rem;
+  color: rgba(248, 250, 252, 0.5);
+  margin: 0.25rem 0 0;
+}
+
+/* Grid principal */
+.calculador-suenos__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .calculador-suenos__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Panel inputs */
+.calculador-suenos__inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Secciones */
+.cs-seccion {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+.cs-seccion:hover {
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.cs-seccion h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(248, 250, 252, 0.5);
+  margin: 0;
+}
+
+.cs-seccion__icon {
+  width: 18px;
+  height: 18px;
+  color: #22C55E;
+  display: flex;
+  align-items: center;
+}
+
+.cs-seccion__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Info de gasto */
+.cs-gasto-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(34, 197, 94, 0.06);
+  border: 1px solid rgba(34, 197, 94, 0.15);
+  border-radius: 10px;
+  font-size: 0.875rem;
+  color: rgba(248, 250, 252, 0.7);
+}
+
+.cs-gasto-valor {
+  font-weight: 700;
+  color: #22C55E;
+  font-size: 1rem;
+}
+
+.cs-aviso {
+  font-size: 0.8rem;
+  color: rgba(251, 191, 36, 0.8);
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(251, 191, 36, 0.06);
+  border-radius: 8px;
+  border-left: 2px solid #FBBF24;
+}
+
+/* Slider */
+.cs-slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cs-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cs-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #22C55E;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.cs-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 18px rgba(34, 197, 94, 0.7);
+  transform: scale(1.15);
+}
+
+.cs-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #22C55E;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+
+.cs-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: rgba(248, 250, 252, 0.4);
+}
+
+.cs-slider-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #22C55E;
+  text-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
+}
+
+/* Panel resultado */
+.calculador-suenos__resultado {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 1.5rem;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  position: sticky;
+  top: 1rem;
+}
+
+.calculador-suenos__resultado.visible {
+  border-color: rgba(34, 197, 94, 0.25);
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.08);
+  animation: resultadoEntrada 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes resultadoEntrada {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Resultado header */
+.cs-resultado-header {
+  text-align: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.cs-resultado-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22C55E;
+  margin: 0 auto 0.75rem;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+}
+
+.cs-resultado-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.cs-resultado-header h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0 0 0.25rem;
+}
+
+.cs-resultado-precio {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #22C55E;
+  text-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+  margin: 0;
+}
+
+/* Stats grid */
+.cs-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.cs-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: statEntrada 0.4s ease both;
+}
+
+.cs-stat:hover {
+  transform: translateY(-2px);
+}
+
+.cs-stat:nth-child(1) { animation-delay: 0.05s; }
+.cs-stat:nth-child(2) { animation-delay: 0.1s; }
+.cs-stat:nth-child(3) { animation-delay: 0.15s; }
+.cs-stat:nth-child(4) { animation-delay: 0.2s; }
+
+@keyframes statEntrada {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cs-stat--verde  { background: rgba(34, 197, 94, 0.08);  border-color: rgba(34, 197, 94, 0.15); }
+.cs-stat--amarillo { background: rgba(251, 191, 36, 0.08); border-color: rgba(251, 191, 36, 0.15); }
+.cs-stat--azul   { background: rgba(56, 189, 248, 0.08);  border-color: rgba(56, 189, 248, 0.15); }
+.cs-stat--morado { background: rgba(167, 139, 250, 0.08); border-color: rgba(167, 139, 250, 0.15); }
+
+.cs-stat__icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-stat__icon svg { width: 20px; height: 20px; }
+
+.cs-stat--verde  .cs-stat__icon { color: #22C55E; }
+.cs-stat--amarillo .cs-stat__icon { color: #FBBF24; }
+.cs-stat--azul   .cs-stat__icon { color: #38BDF8; }
+.cs-stat--morado .cs-stat__icon { color: #A78BFA; }
+
+.cs-stat > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.cs-stat__label {
+  font-size: 0.7rem;
+  color: rgba(248, 250, 252, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cs-stat__valor {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Barra de progreso */
+.cs-progreso {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cs-progreso__header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: rgba(248, 250, 252, 0.5);
+}
+
+.cs-progreso__barra {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cs-progreso__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22C55E, #4ADE80);
+  border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+}
+
+/* Desglose */
+.cs-desglose {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cs-desglose h4 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(248, 250, 252, 0.4);
+  margin: 0 0 0.25rem;
+}
+
+.cs-desglose__fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: rgba(248, 250, 252, 0.65);
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.cs-desglose__fila:last-child { border-bottom: none; }
+
+.cs-desglose__fila--total {
+  font-weight: 700;
+  color: #FFFFFF;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.cs-desglose__fila .verde  { color: #22C55E; }
+.cs-desglose__fila .rojo   { color: #F87171; }
+.cs-desglose__fila .amarillo { color: #FBBF24; }
+
+/* Alerta */
+.cs-alerta {
+  padding: 0.875rem 1rem;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: #F87171;
+  border-left: 3px solid #F87171;
+}
+
+/* Placeholder */
+.cs-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.cs-placeholder__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(248, 250, 252, 0.2);
+  animation: pulseIcon 2.5s ease-in-out infinite;
+}
+
+.cs-placeholder__icon svg { width: 26px; height: 26px; }
+
+@keyframes pulseIcon {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 0.8; transform: scale(1.05); }
+}
+
+.cs-placeholder h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(248, 250, 252, 0.4);
+  margin: 0;
+}
+
+.cs-placeholder p {
+  font-size: 0.85rem;
+  color: rgba(248, 250, 252, 0.25);
+  margin: 0;
+}
