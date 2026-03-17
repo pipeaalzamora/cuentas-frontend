@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { useCuentas } from '../contextos/CuentasContext';
-import { servicioCalculosEstadisticas } from '../servicios/calculosEstadisticas';
+import React, { useState, useMemo, useEffect } from 'react';
+import { servicioDesglosadorSueldo } from '../servicios/desglosadorSueldo';
 import { formatearPesosChilenos } from '../utilidades/formatoChileno';
+import type { DesgloseSueldo } from '../tipos/desglosador';
 import Input from './base/Input';
 import Boton from './base/Boton';
 import './CalculadorSuenos.css';
@@ -23,7 +23,8 @@ const IconoCalendario = () => (
 );
 const IconoAhorro = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M22 2l-5 5"/><path d="M17 2h5v5"/>
+    <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+    <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
   </svg>
 );
 const IconoSueldo = () => (
@@ -36,6 +37,11 @@ const IconoGastos = () => (
     <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/>
   </svg>
 );
+const IconoInfo = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+);
 
 const limpiarNumero = (v: string) => v.replace(/\D/g, '');
 const formatearConPuntos = (v: string) => {
@@ -45,36 +51,50 @@ const formatearConPuntos = (v: string) => {
 };
 
 const CalculadorSuenos: React.FC = () => {
-  const { cuentas } = useCuentas();
-
   const fechaActual = new Date();
   const mesActual = fechaActual.getMonth() + 1;
   const añoActual = fechaActual.getFullYear();
 
-  // Calcular gasto mensual promedio de los últimos 3 meses
-  const gastoMensualPromedio = useMemo(() => {
-    const meses = [0, 1, 2].map(offset => {
-      let m = mesActual - offset;
-      let a = añoActual;
-      if (m <= 0) { m += 12; a -= 1; }
-      return servicioCalculosEstadisticas.calcularEstadisticasMensuales(cuentas, a, m).totalGastos;
+  // Cargar desgloses de sueldo
+  const [desgloses, setDesgloses] = useState<DesgloseSueldo[]>([]);
+  const [cargando, setCargando] = useState(true);
+
+  useEffect(() => {
+    servicioDesglosadorSueldo.obtenerDesgloses().then(d => {
+      setDesgloses(d);
+      setCargando(false);
     });
-    const total = meses.reduce((s, v) => s + v, 0);
-    const mesesConDatos = meses.filter(v => v > 0).length;
-    return mesesConDatos > 0 ? Math.round(total / mesesConDatos) : 0;
-  }, [cuentas, mesActual, añoActual]);
+  }, []);
+
+  // Tomar el desglose del mes actual (o el más reciente)
+  const desgloseActual = useMemo(() => {
+    const delMes = desgloses.find(d => d.mes === mesActual && d.año === añoActual);
+    if (delMes) return delMes;
+    // fallback: el más reciente
+    return desgloses.sort((a, b) => {
+      if (b.año !== a.año) return b.año - a.año;
+      return b.mes - a.mes;
+    })[0] ?? null;
+  }, [desgloses, mesActual, añoActual]);
+
+  // Calcular saldo restante desde el desglose
+  const resumenSueldo = useMemo(() => {
+    if (!desgloseActual) return null;
+    return servicioDesglosadorSueldo.calcularResumen(desgloseActual);
+  }, [desgloseActual]);
+
+  const saldoRestante = resumenSueldo?.saldoRestante ?? 0;
+  const sueldoInicial = resumenSueldo?.sueldoInicial ?? 0;
+  const totalDescuentos = resumenSueldo?.totalDescuentos ?? 0;
 
   // Inputs
   const [nombreSueno, setNombreSueno] = useState('');
   const [precioBruto, setPrecioBruto] = useState('');
-  const [sueldoBruto, setSueldoBruto] = useState('');
   const [porcentajeAhorro, setPorcentajeAhorro] = useState(30);
   const [calculado, setCalculado] = useState(false);
 
   const precio = parseInt(limpiarNumero(precioBruto)) || 0;
-  const sueldo = parseInt(limpiarNumero(sueldoBruto)) || 0;
-  const excedente = Math.max(0, sueldo - gastoMensualPromedio);
-  const ahorroMensual = Math.round(excedente * (porcentajeAhorro / 100));
+  const ahorroMensual = Math.round(Math.max(0, saldoRestante) * (porcentajeAhorro / 100));
   const mesesNecesarios = ahorroMensual > 0 ? Math.ceil(precio / ahorroMensual) : 0;
   const años = Math.floor(mesesNecesarios / 12);
   const mesesRestantes = mesesNecesarios % 12;
@@ -87,30 +107,48 @@ const CalculadorSuenos: React.FC = () => {
   }, [mesesNecesarios]);
 
   const porcentajeProgreso = precio > 0 ? Math.min(100, (ahorroMensual / precio) * 100) : 0;
+  const puedeCalcular = precio > 0 && saldoRestante > 0 && nombreSueno.trim().length > 0;
 
-  const puedeCalcular = precio > 0 && sueldo > 0 && nombreSueno.trim().length > 0;
+  const nombreMesDesglose = desgloseActual
+    ? new Date(desgloseActual.año, desgloseActual.mes - 1).toLocaleDateString('es-CL', { month: 'long', year: 'numeric' })
+    : '';
 
   return (
     <div className="calculador-suenos">
-      {/* Header */}
       <div className="calculador-suenos__header">
         <div className="calculador-suenos__header-icon">
           <IconoEstrella />
         </div>
         <div>
           <h1>Calculador de Sueños</h1>
-          <p>Descubre cuánto tiempo necesitas para alcanzar tu meta</p>
+          <p>Basado en tu saldo real de "Mi Sueldo"</p>
         </div>
       </div>
+
+      {/* Banner de sueldo cargado */}
+      {!cargando && (
+        <div className={`cs-banner-sueldo ${desgloseActual ? 'cs-banner-sueldo--ok' : 'cs-banner-sueldo--warn'}`}>
+          <span className="cs-banner-sueldo__icon">
+            {desgloseActual ? <IconoSueldo /> : <IconoInfo />}
+          </span>
+          {desgloseActual ? (
+            <span>
+              Usando desglose de <strong>{nombreMesDesglose}</strong> —
+              Sueldo: <strong>{formatearPesosChilenos(sueldoInicial)}</strong> ·
+              Gastos: <strong>- {formatearPesosChilenos(totalDescuentos)}</strong> ·
+              Saldo restante: <strong className="verde">{formatearPesosChilenos(saldoRestante)}</strong>
+            </span>
+          ) : (
+            <span>No hay desglose de sueldo registrado. Ve a <strong>Mi Sueldo</strong> y agrega tu planilla primero.</span>
+          )}
+        </div>
+      )}
 
       <div className="calculador-suenos__grid">
         {/* Panel izquierdo - Inputs */}
         <div className="calculador-suenos__inputs">
           <div className="cs-seccion">
-            <h3>
-              <span className="cs-seccion__icon"><IconoMeta /></span>
-              Tu Sueño
-            </h3>
+            <h3><span className="cs-seccion__icon"><IconoMeta /></span>Tu Sueño</h3>
             <Input
               etiqueta="¿Qué quieres comprar?"
               type="text"
@@ -129,44 +167,29 @@ const CalculadorSuenos: React.FC = () => {
           </div>
 
           <div className="cs-seccion">
-            <h3>
-              <span className="cs-seccion__icon"><IconoSueldo /></span>
-              Tu Sueldo Mensual
-            </h3>
-            <Input
-              etiqueta="Sueldo neto (CLP)"
-              type="text"
-              value={sueldoBruto}
-              onChange={e => setSueldoBruto(formatearConPuntos(e.target.value))}
-              placeholder="Ej: 1.500.000"
-            />
-          </div>
-
-          <div className="cs-seccion">
-            <h3>
-              <span className="cs-seccion__icon"><IconoGastos /></span>
-              Tus Gastos
-            </h3>
+            <h3><span className="cs-seccion__icon"><IconoGastos /></span>Tu saldo disponible</h3>
             <div className="cs-gasto-info">
-              <span>Promedio mensual (últimos 3 meses)</span>
-              <span className="cs-gasto-valor">{formatearPesosChilenos(gastoMensualPromedio)}</span>
+              <span>Sueldo inicial</span>
+              <span className="cs-gasto-valor">{formatearPesosChilenos(sueldoInicial)}</span>
             </div>
-            {gastoMensualPromedio === 0 && (
-              <p className="cs-aviso">No hay cuentas registradas. El cálculo usará $0 en gastos.</p>
+            <div className="cs-gasto-info">
+              <span>Total gastos planilla</span>
+              <span style={{ color: '#F87171', fontWeight: 700 }}>- {formatearPesosChilenos(totalDescuentos)}</span>
+            </div>
+            <div className="cs-gasto-info cs-gasto-info--destacado">
+              <span>Saldo restante</span>
+              <span className="cs-gasto-valor">{formatearPesosChilenos(saldoRestante)}</span>
+            </div>
+            {saldoRestante <= 0 && desgloseActual && (
+              <p className="cs-aviso">Tu saldo restante es $0 o negativo. Revisa tu planilla en Mi Sueldo.</p>
             )}
           </div>
 
           <div className="cs-seccion">
-            <h3>
-              <span className="cs-seccion__icon"><IconoAhorro /></span>
-              % del excedente a ahorrar
-            </h3>
+            <h3><span className="cs-seccion__icon"><IconoAhorro /></span>% del saldo a ahorrar</h3>
             <div className="cs-slider-container">
               <input
-                type="range"
-                min={5}
-                max={100}
-                step={5}
+                type="range" min={5} max={100} step={5}
                 value={porcentajeAhorro}
                 onChange={e => setPorcentajeAhorro(parseInt(e.target.value))}
                 className="cs-slider"
@@ -176,6 +199,10 @@ const CalculadorSuenos: React.FC = () => {
                 <span className="cs-slider-value">{porcentajeAhorro}%</span>
                 <span>100%</span>
               </div>
+            </div>
+            <div className="cs-gasto-info cs-gasto-info--destacado">
+              <span>Ahorro mensual estimado</span>
+              <span className="cs-gasto-valor">{formatearPesosChilenos(ahorroMensual)}</span>
             </div>
           </div>
 
@@ -199,13 +226,12 @@ const CalculadorSuenos: React.FC = () => {
                 <p className="cs-resultado-precio">{formatearPesosChilenos(precio)}</p>
               </div>
 
-              {/* Stats grid */}
               <div className="cs-stats">
                 <div className="cs-stat cs-stat--verde">
                   <div className="cs-stat__icon"><IconoSueldo /></div>
                   <div>
-                    <span className="cs-stat__label">Excedente mensual</span>
-                    <span className="cs-stat__valor">{formatearPesosChilenos(excedente)}</span>
+                    <span className="cs-stat__label">Saldo restante</span>
+                    <span className="cs-stat__valor">{formatearPesosChilenos(saldoRestante)}</span>
                   </div>
                 </div>
                 <div className="cs-stat cs-stat--amarillo">
@@ -221,9 +247,9 @@ const CalculadorSuenos: React.FC = () => {
                     <span className="cs-stat__label">Tiempo estimado</span>
                     <span className="cs-stat__valor">
                       {mesesNecesarios === 0
-                        ? '¡Ya puedes comprarlo!'
+                        ? 'Ya puedes comprarlo'
                         : años > 0
-                          ? `${años} año${años > 1 ? 's' : ''} ${mesesRestantes > 0 ? `y ${mesesRestantes} mes${mesesRestantes > 1 ? 'es' : ''}` : ''}`
+                          ? `${años} año${años > 1 ? 's' : ''}${mesesRestantes > 0 ? ` y ${mesesRestantes} mes${mesesRestantes > 1 ? 'es' : ''}` : ''}`
                           : `${mesesNecesarios} mes${mesesNecesarios > 1 ? 'es' : ''}`
                       }
                     </span>
@@ -240,37 +266,32 @@ const CalculadorSuenos: React.FC = () => {
                 )}
               </div>
 
-              {/* Barra de progreso visual */}
               <div className="cs-progreso">
                 <div className="cs-progreso__header">
                   <span>Ahorro mensual vs precio total</span>
                   <span>{porcentajeProgreso.toFixed(1)}% por mes</span>
                 </div>
                 <div className="cs-progreso__barra">
-                  <div
-                    className="cs-progreso__fill"
-                    style={{ width: `${porcentajeProgreso}%` }}
-                  />
+                  <div className="cs-progreso__fill" style={{ width: `${porcentajeProgreso}%` }} />
                 </div>
               </div>
 
-              {/* Desglose */}
               <div className="cs-desglose">
                 <h4>Desglose del cálculo</h4>
                 <div className="cs-desglose__fila">
-                  <span>Sueldo neto</span>
-                  <span className="verde">{formatearPesosChilenos(sueldo)}</span>
+                  <span>Sueldo inicial</span>
+                  <span className="verde">{formatearPesosChilenos(sueldoInicial)}</span>
                 </div>
                 <div className="cs-desglose__fila">
-                  <span>Gastos mensuales promedio</span>
-                  <span className="rojo">- {formatearPesosChilenos(gastoMensualPromedio)}</span>
+                  <span>Gastos planilla</span>
+                  <span className="rojo">- {formatearPesosChilenos(totalDescuentos)}</span>
                 </div>
                 <div className="cs-desglose__fila cs-desglose__fila--total">
-                  <span>Excedente disponible</span>
-                  <span className="verde">{formatearPesosChilenos(excedente)}</span>
+                  <span>Saldo restante</span>
+                  <span className="verde">{formatearPesosChilenos(saldoRestante)}</span>
                 </div>
                 <div className="cs-desglose__fila">
-                  <span>Ahorro ({porcentajeAhorro}% del excedente)</span>
+                  <span>Ahorro ({porcentajeAhorro}% del saldo)</span>
                   <span className="amarillo">{formatearPesosChilenos(ahorroMensual)}</span>
                 </div>
                 <div className="cs-desglose__fila cs-desglose__fila--total">
@@ -278,18 +299,17 @@ const CalculadorSuenos: React.FC = () => {
                   <span>{mesesNecesarios}</span>
                 </div>
               </div>
-
-              {excedente <= 0 && (
-                <div className="cs-alerta">
-                  Tus gastos superan tu sueldo. Revisa tus cuentas o ajusta tu presupuesto.
-                </div>
-              )}
             </>
           ) : (
             <div className="cs-placeholder">
               <div className="cs-placeholder__icon"><IconoEstrella /></div>
               <h3>Tu resultado aparecerá aquí</h3>
-              <p>Completa los datos y presiona "Calcular mi sueño"</p>
+              <p>
+                {!desgloseActual
+                  ? 'Primero agrega tu planilla en Mi Sueldo'
+                  : 'Completa los datos y presiona "Calcular mi sueño"'
+                }
+              </p>
             </div>
           )}
         </div>
