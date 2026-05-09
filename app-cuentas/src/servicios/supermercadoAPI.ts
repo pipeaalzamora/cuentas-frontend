@@ -1,13 +1,5 @@
 import api from './api';
-import type { ItemSuperInput, ListaSupermercadoInput } from '../tipos/supermercado';
-
-// Extender el tipo de input para incluir los campos del modelo
-interface ListaSupermercadoInputExtended {
-  nombre?: string;
-  presupuestoLimite?: number;
-  mes?: number;
-  año?: number;
-}
+import type { ItemSuperInput } from '../tipos/supermercado';
 
 export const supermercadoAPI = {
   // Obtener la lista activa (crea una si no existe)
@@ -17,7 +9,7 @@ export const supermercadoAPI = {
   },
 
   // Actualizar configuración de la lista (nombre, presupuesto)
-  actualizarConfig: async (input: ListaSupermercadoInputExtended) => {
+  actualizarConfig: async (input: { nombre?: string; presupuestoLimite?: number; mes?: number; año?: number }) => {
     const response = await api.put('/supermercado', input);
     return response.data;
   },
