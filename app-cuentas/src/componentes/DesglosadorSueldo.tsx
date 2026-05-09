@@ -247,39 +247,44 @@ const DesglosadorSueldo: React.FC = () => {
   };
 
   const generarOpcionesMeses = () => {
-    const opciones: { mes: number; año: number; label: string; existe: boolean }[] = [];
     const hoy = new Date();
-    const añoActual = hoy.getFullYear();
     const mesActual = hoy.getMonth() + 1;
-    
+    const añoActual = hoy.getFullYear();
+
     const meses = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ];
-    
-    const añoInicio = 2025;
-    const mesInicio = 12;
-    const añoFin = añoActual;
-    const mesFin = mesActual + 3;
-    
-    const añoFinal = añoFin + Math.floor(mesFin / 12);
-    const mesFinal = mesFin % 12 || 12;
-    
-    for (let año = añoFinal; año >= añoInicio; año--) {
-      let mesMax = año === añoFinal ? mesFinal : 12;
-      let mesMin = año === añoInicio ? mesInicio : 1;
-      
-      for (let mes = mesMax; mes >= mesMin; mes--) {
-        const existe = todosDesgloses.some(d => d.mes === mes && d.año === año);
+
+    // Siempre incluir el mes actual
+    const opciones: { mes: number; año: number; label: string; existe: boolean }[] = [
+      {
+        mes: mesActual,
+        año: añoActual,
+        label: `${meses[mesActual - 1]} ${añoActual}`,
+        existe: todosDesgloses.some(d => d.mes === mesActual && d.año === añoActual),
+      }
+    ];
+
+    // Agregar los desgloses ya existentes que no sean el mes actual
+    todosDesgloses.forEach(d => {
+      if (d.mes === mesActual && d.año === añoActual) return;
+      const yaEsta = opciones.some(o => o.mes === d.mes && o.año === d.año);
+      if (!yaEsta) {
         opciones.push({
-          mes,
-          año,
-          label: `${meses[mes - 1]} ${año}`,
-          existe
+          mes: d.mes,
+          año: d.año,
+          label: `${meses[d.mes - 1]} ${d.año}`,
+          existe: true,
         });
       }
-    }
-    
+    });
+
+    // Ordenar: más reciente primero
+    opciones.sort((a, b) =>
+      b.año !== a.año ? b.año - a.año : b.mes - a.mes
+    );
+
     return opciones;
   };
 

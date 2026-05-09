@@ -11,6 +11,7 @@ import Estadisticas from '../paginas/Estadisticas';
 import Reportes from '../paginas/Reportes';
 import Desglosador from '../paginas/Desglosador';
 import Suenos from '../paginas/Suenos';
+import Supermercado from '../paginas/Supermercado';
 import NotFound from '../paginas/NotFound';
 import TestNavegacion from '../paginas/TestNavegacion';
 
@@ -39,7 +40,8 @@ const AppContent: React.FC = () => {
       '/estadisticas': 'Estadísticas y Análisis',
       '/reportes': 'Generación de Reportes',
       '/desglosador': 'Mi Sueldo',
-      '/suenos': 'Calculador de Sueños'
+      '/suenos': 'Calculador de Sueños',
+      '/supermercado': 'Lista del Super',
     };
 
     if (path !== '/') {
@@ -73,6 +75,7 @@ const AppContent: React.FC = () => {
     if (path.startsWith('/reportes')) return 'reportes';
     if (path.startsWith('/desglosador')) return 'desglosador';
     if (path.startsWith('/suenos')) return 'suenos';
+    if (path.startsWith('/supermercado')) return 'supermercado';
     return 'dashboard';
   };
 
@@ -89,6 +92,7 @@ const AppContent: React.FC = () => {
           <Route path="/reportes" element={<Reportes />} />
           <Route path="/desglosador" element={<Desglosador />} />
           <Route path="/suenos" element={<Suenos />} />
+          <Route path="/supermercado" element={<Supermercado />} />
           <Route path="/test" element={<TestNavegacion />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

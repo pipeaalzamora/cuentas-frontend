@@ -4,6 +4,7 @@ import Boton from './base/Boton';
 import Tarjeta from './base/Tarjeta';
 import ConfirmacionEliminar from './base/ConfirmacionEliminar';
 import { SkeletonTabla } from './base/Skeleton';
+import ModalDetalleCuenta from './ModalDetalleCuenta';
 import type { CuentaServicio, FiltrosCuentas, CampoOrdenamiento, DireccionOrdenamiento, TipoServicio } from '../tipos';
 import { useDebounce } from '../utilidades/useDebounce';
 import { formatearPesosChilenos, formatearFechaChilena, formatearMesAñoChileno, obtenerNombreMes } from '../utilidades/formatoChileno';
@@ -39,6 +40,9 @@ const ListaCuentas: React.FC<ListaCuentasProps> = ({ onEditarCuenta }) => {
 
   // Estado para confirmación de eliminación
   const [cuentaAEliminar, setCuentaAEliminar] = useState<CuentaServicio | null>(null);
+
+  // Estado para el modal de detalle
+  const [cuentaDetalle, setCuentaDetalle] = useState<CuentaServicio | null>(null);
 
   // Obtener años únicos para el filtro
   const añosDisponibles = useMemo(() => {
@@ -312,6 +316,7 @@ const ListaCuentas: React.FC<ListaCuentasProps> = ({ onEditarCuenta }) => {
                       cuenta={cuenta}
                       onEditar={onEditarCuenta}
                       onEliminar={setCuentaAEliminar}
+                      onVerDetalle={setCuentaDetalle}
                       obtenerColorServicio={obtenerColorServicio}
                       formatearMonto={formatearMonto}
                     />
@@ -334,6 +339,13 @@ const ListaCuentas: React.FC<ListaCuentasProps> = ({ onEditarCuenta }) => {
           tipo="eliminar"
         />
       )}
+
+      {/* Modal de detalle de cuenta */}
+      <ModalDetalleCuenta
+        cuenta={cuentaDetalle}
+        onCerrar={() => setCuentaDetalle(null)}
+        onEditar={onEditarCuenta ? (c) => { setCuentaDetalle(null); onEditarCuenta(c); } : undefined}
+      />
     </div>
   );
 };
@@ -343,16 +355,24 @@ const FilaCuenta = memo<{
   cuenta: CuentaServicio;
   onEditar?: (cuenta: CuentaServicio) => void;
   onEliminar: (cuenta: CuentaServicio) => void;
+  onVerDetalle: (cuenta: CuentaServicio) => void;
   obtenerColorServicio: (tipo: string) => string;
   formatearMonto: (monto: number) => string;
-}>(({ cuenta, onEditar, onEliminar, obtenerColorServicio, formatearMonto }) => {
+}>(({ cuenta, onEditar, onEliminar, onVerDetalle, obtenerColorServicio, formatearMonto }) => {
   // Validación defensiva para evitar errores si falta el campo servicio
   const servicioTexto = cuenta.servicio 
     ? cuenta.servicio.charAt(0).toUpperCase() + cuenta.servicio.slice(1)
     : 'Sin servicio';
   
   return (
-    <tr className="lista-cuentas__fila">
+    <tr
+      className="lista-cuentas__fila lista-cuentas__fila--clickeable"
+      onClick={() => onVerDetalle(cuenta)}
+      tabIndex={0}
+      role="button"
+      aria-label={`Ver detalle de cuenta ${servicioTexto}`}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onVerDetalle(cuenta)}
+    >
       <td>
         <div className="lista-cuentas__servicio">
           <span
@@ -382,7 +402,7 @@ const FilaCuenta = memo<{
       {formatearFechaChilena(cuenta.fechaCreacion)}
     </td>
     <td>
-      <div className="lista-cuentas__acciones">
+      <div className="lista-cuentas__acciones" onClick={(e) => e.stopPropagation()}>
         {onEditar && (
           <Boton
             variante="outline"

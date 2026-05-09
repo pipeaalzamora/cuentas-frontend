@@ -117,6 +117,15 @@
   animation: fadeInRow 0.3s ease-out both;
 }
 
+.lista-cuentas__fila--clickeable {
+  cursor: pointer;
+}
+
+.lista-cuentas__fila--clickeable:focus-visible {
+  outline: 2px solid #00FF88;
+  outline-offset: -2px;
+}
+
 /* Stagger filas */
 .lista-cuentas__fila:nth-child(1) { animation-delay: 0.05s; }
 .lista-cuentas__fila:nth-child(2) { animation-delay: 0.08s; }
