@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { DesgloseSueldo, Gasto, TipoGasto } from '../tipos/desglosador';
 import { servicioDesglosadorSueldo } from '../servicios/desglosadorSueldo';
 import { desgloseSueldoAPI } from '../servicios/desgloseSueldoAPI';
@@ -44,29 +44,8 @@ const DesglosadorSueldo: React.FC = () => {
   const [monto, setMonto] = useState('');
   const [tipo, setTipo] = useState<TipoGasto>('otro');
 
-  useEffect(() => {
-    cargarDesgloses();
-  }, []);
-
-  useEffect(() => {
-    if (todosDesgloses.length > 0) {
-      cargarDesglosePorPeriodo(mesGlobal, añoGlobal);
-    }
-  }, [mesGlobal, añoGlobal, todosDesgloses.length]);
-
-  const cargarDesgloses = async () => {
-    try {
-      const desgloses = await servicioDesglosadorSueldo.obtenerDesgloses();
-      setTodosDesgloses(desgloses);
-      cargarDesglosePorPeriodo(mesGlobal, añoGlobal, desgloses);
-    } catch (error) {
-      console.error('Error al cargar desgloses:', error);
-    }
-  };
-
-  const cargarDesglosePorPeriodo = (mes: number, año: number, desgloses?: DesgloseSueldo[]) => {
-    const listaDesgloses = desgloses || todosDesgloses;
-    const desglose = listaDesgloses.find(d => d.mes === mes && d.año === año);
+  const cargarDesglosePorPeriodo = useCallback((mes: number, año: number, desgloses: DesgloseSueldo[]) => {
+    const desglose = desgloses.find(d => d.mes === mes && d.año === año);
     
     if (desglose) {
       setDesgloseActual(desglose);
@@ -75,7 +54,27 @@ const DesglosadorSueldo: React.FC = () => {
     } else {
       setDesgloseActual(null);
     }
-  };
+  }, []);
+
+  const cargarDesgloses = useCallback(async () => {
+    try {
+      const desgloses = await servicioDesglosadorSueldo.obtenerDesgloses();
+      setTodosDesgloses(desgloses);
+      cargarDesglosePorPeriodo(mesGlobal, añoGlobal, desgloses);
+    } catch (error) {
+      console.error('Error al cargar desgloses:', error);
+    }
+  }, [añoGlobal, cargarDesglosePorPeriodo, mesGlobal]);
+
+  useEffect(() => {
+    cargarDesgloses();
+  }, [cargarDesgloses]);
+
+  useEffect(() => {
+    if (todosDesgloses.length > 0) {
+      cargarDesglosePorPeriodo(mesGlobal, añoGlobal, todosDesgloses);
+    }
+  }, [cargarDesglosePorPeriodo, mesGlobal, añoGlobal, todosDesgloses]);
 
   const iniciarDesglose = async () => {
     const sueldoLimpio = limpiarNumero(sueldoInicial);

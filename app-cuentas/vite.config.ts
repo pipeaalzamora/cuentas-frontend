@@ -10,4 +10,17 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+          firebase: ['firebase/app', 'firebase/auth'],
+          charts: ['chart.js', 'react-chartjs-2'],
+          pdf: ['jspdf'],
+          capture: ['html2canvas'],
+        },
+      },
+    },
+  },
 })

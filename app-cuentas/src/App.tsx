@@ -2,7 +2,9 @@ import { CuentasProvider } from './contextos/CuentasContext';
 import { ConfiguracionProvider } from './contextos/ConfiguracionContext';
 import { TemaProvider } from './contextos/TemaContext';
 import { PeriodoProvider } from './contextos/PeriodoContext';
+import { AuthProvider } from './contextos/AuthContext';
 import { AppRouter } from './componentes/AppRouter';
+import { AuthGate } from './componentes/AuthGate';
 import { ErrorBoundary } from './componentes/ErrorBoundary';
 import { ManejadorErrores } from './utilidades/manejoErrores';
 import type { ErrorInfo } from 'react';
@@ -19,15 +21,19 @@ function App() {
   return (
     <ErrorBoundary onError={manejarErrorGlobal}>
       <TemaProvider>
-        <PeriodoProvider>
-          <ConfiguracionProvider>
-            <CuentasProvider>
-              <div className="app">
-                <AppRouter />
-              </div>
-            </CuentasProvider>
-          </ConfiguracionProvider>
-        </PeriodoProvider>
+        <AuthProvider>
+          <AuthGate>
+            <PeriodoProvider>
+              <ConfiguracionProvider>
+                <CuentasProvider>
+                  <div className="app">
+                    <AppRouter />
+                  </div>
+                </CuentasProvider>
+              </ConfiguracionProvider>
+            </PeriodoProvider>
+          </AuthGate>
+        </AuthProvider>
       </TemaProvider>
     </ErrorBoundary>
   );

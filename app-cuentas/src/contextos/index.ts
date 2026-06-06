@@ -8,3 +8,5 @@ export { ConfiguracionProvider, useConfiguracion } from './ConfiguracionContext'
 export type { AccionConfiguracion, EstadoConfiguracion, AccionesConfiguracion, ContextoConfiguracion } from './ConfiguracionContext';
 
 export { PeriodoProvider, usePeriodo } from './PeriodoContext';
+
+export { AuthProvider, useAuth } from './AuthContext';

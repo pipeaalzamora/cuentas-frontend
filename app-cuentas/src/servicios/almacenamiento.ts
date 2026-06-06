@@ -10,39 +10,58 @@ import {
 } from '../tipos/esquemas';
 import { cuentasAPI } from './cuentasAPI';
 
+type CuentaCruda = Record<string, unknown>;
+
+const obtenerFecha = (valor: unknown, respaldo: Date): Date => {
+  if (!valor) return respaldo;
+  const fecha = new Date(valor as string | number | Date);
+  return isNaN(fecha.getTime()) ? respaldo : fecha;
+};
+
+const obtenerNumero = (valor: unknown, respaldo = 0): number => {
+  if (typeof valor === 'number') return valor;
+  if (typeof valor === 'string') {
+    const numero = Number(valor);
+    return Number.isFinite(numero) ? numero : respaldo;
+  }
+  return respaldo;
+};
+
+const obtenerTexto = (valor: unknown, respaldo = ''): string => {
+  return typeof valor === 'string' && valor.trim() !== '' ? valor : respaldo;
+};
+
 /**
  * Normaliza una cuenta cruda de MongoDB a CuentaServicio con fechas Date e id correcto
  */
-function normalizarCuenta(cuenta: any): CuentaServicio {
-  const fechaVencimiento = cuenta.fechaVencimiento ? new Date(cuenta.fechaVencimiento) : new Date();
-  const fechaCreacion = cuenta.fechaCreacion || cuenta.createdAt
-    ? new Date(cuenta.fechaCreacion || cuenta.createdAt)
-    : new Date();
-
-  const id = String(cuenta._id || cuenta.id || `tmp_${Date.now()}`);
+function normalizarCuenta(cuenta: CuentaCruda): CuentaServicio {
+  const ahora = new Date();
+  const fechaVencimiento = obtenerFecha(cuenta.fechaVencimiento, ahora);
+  const fechaCreacion = obtenerFecha(cuenta.fechaCreacion || cuenta.createdAt, ahora);
+  const id = obtenerTexto(cuenta._id || cuenta.id, `tmp_${Date.now()}`);
 
   return {
     ...cuenta,
     id,
-    servicio: cuenta.servicio || 'luz',
-    monto: typeof cuenta.monto === 'number' ? cuenta.monto : Number(cuenta.monto) || 0,
-    mes: typeof cuenta.mes === 'number' ? cuenta.mes : parseInt(cuenta.mes) || 1,
-    año: typeof cuenta.año === 'number' ? cuenta.año : parseInt(cuenta.año) || new Date().getFullYear(),
+    servicio: obtenerTexto(cuenta.servicio, 'luz') as CuentaServicio['servicio'],
+    monto: obtenerNumero(cuenta.monto),
+    mes: obtenerNumero(cuenta.mes, 1),
+    año: obtenerNumero(cuenta.año, ahora.getFullYear()),
     pagada: Boolean(cuenta.pagada),
-    fechaVencimiento: isNaN(fechaVencimiento.getTime()) ? new Date() : fechaVencimiento,
-    fechaCreacion: isNaN(fechaCreacion.getTime()) ? new Date() : fechaCreacion,
+    fechaVencimiento,
+    fechaCreacion,
     fechaActualizacion: cuenta.fechaActualizacion || cuenta.updatedAt
-      ? new Date(cuenta.fechaActualizacion || cuenta.updatedAt)
+      ? obtenerFecha(cuenta.fechaActualizacion || cuenta.updatedAt, fechaCreacion)
       : undefined,
-    fechaEmision: cuenta.fechaEmision ? new Date(cuenta.fechaEmision) : fechaCreacion,
-    fechaCorte: cuenta.fechaCorte ? new Date(cuenta.fechaCorte) : fechaVencimiento,
-    fechaLectura: cuenta.fechaLectura ? new Date(cuenta.fechaLectura) : fechaVencimiento,
-    proximaFechaLectura: cuenta.proximaFechaLectura ? new Date(cuenta.proximaFechaLectura) : undefined,
-    saldoAnterior: cuenta.saldoAnterior || 0,
-    consumoActual: cuenta.consumoActual || cuenta.monto || 0,
-    otrosCargos: cuenta.otrosCargos || 0,
-    descuentos: cuenta.descuentos || 0,
-  };
+    fechaEmision: obtenerFecha(cuenta.fechaEmision, fechaCreacion),
+    fechaCorte: obtenerFecha(cuenta.fechaCorte, fechaVencimiento),
+    fechaLectura: obtenerFecha(cuenta.fechaLectura, fechaVencimiento),
+    proximaFechaLectura: cuenta.proximaFechaLectura ? obtenerFecha(cuenta.proximaFechaLectura, fechaVencimiento) : undefined,
+    saldoAnterior: obtenerNumero(cuenta.saldoAnterior),
+    consumoActual: obtenerNumero(cuenta.consumoActual, obtenerNumero(cuenta.monto)),
+    otrosCargos: obtenerNumero(cuenta.otrosCargos),
+    descuentos: obtenerNumero(cuenta.descuentos),
+  } as CuentaServicio;
 }
 
 /**
@@ -65,51 +84,39 @@ export class ServicioAlmacenamiento {
    * Guarda una nueva cuenta de servicio
    */
   async guardarCuenta(datosCuenta: Omit<CuentaServicio, 'id' | 'fechaCreacion' | 'fechaActualizacion'>): Promise<CuentaServicio> {
-    try {
-      const cuentaGuardada = await cuentasAPI.crear(datosCuenta as Omit<CuentaServicio, 'id'>);
-      return normalizarCuenta(cuentaGuardada);
-    } catch (error) {
-      throw error;
-    }
+    const cuentaGuardada = await cuentasAPI.crear(datosCuenta as Omit<CuentaServicio, 'id'>);
+    return normalizarCuenta(cuentaGuardada);
   }
 
   /**
    * Actualiza una cuenta existente
    */
   async actualizarCuenta(id: string, datosActualizados: Partial<Omit<CuentaServicio, 'id' | 'fechaCreacion'>>): Promise<CuentaServicio> {
-    try {
-      const cuentaGuardada = await cuentasAPI.actualizar(id, {
-        ...datosActualizados,
-        fechaActualizacion: new Date()
-      });
-      return normalizarCuenta(cuentaGuardada);
-    } catch (error) {
-      throw error;
-    }
+    const cuentaGuardada = await cuentasAPI.actualizar(id, {
+      ...datosActualizados,
+      fechaActualizacion: new Date()
+    });
+    return normalizarCuenta(cuentaGuardada);
   }
 
   /**
    * Obtiene todas las cuentas con filtros opcionales
    */
   async obtenerCuentas(filtros?: FiltrosCuentas): Promise<CuentaServicio[]> {
-    try {
-      const cuentas = await cuentasAPI.obtenerTodas();
-      const cuentasNormalizadas = cuentas.map(normalizarCuenta);
+    const cuentas = await cuentasAPI.obtenerTodas();
+    const cuentasNormalizadas = cuentas.map((cuenta: CuentaCruda) => normalizarCuenta(cuenta));
 
-      if (filtros) {
-        return cuentasNormalizadas.filter((cuenta: CuentaServicio) => {
-          if (filtros.mes !== undefined && cuenta.mes !== filtros.mes) return false;
-          if (filtros.año !== undefined && cuenta.año !== filtros.año) return false;
-          if (filtros.servicio !== undefined && cuenta.servicio !== filtros.servicio) return false;
-          if (filtros.pagada !== undefined && cuenta.pagada !== filtros.pagada) return false;
-          return true;
-        });
-      }
-
-      return cuentasNormalizadas;
-    } catch (error) {
-      return [];
+    if (filtros) {
+      return cuentasNormalizadas.filter((cuenta: CuentaServicio) => {
+        if (filtros.mes !== undefined && cuenta.mes !== filtros.mes) return false;
+        if (filtros.año !== undefined && cuenta.año !== filtros.año) return false;
+        if (filtros.servicio !== undefined && cuenta.servicio !== filtros.servicio) return false;
+        if (filtros.pagada !== undefined && cuenta.pagada !== filtros.pagada) return false;
+        return true;
+      });
     }
+
+    return cuentasNormalizadas;
   }
 
   /**
@@ -119,7 +126,7 @@ export class ServicioAlmacenamiento {
     try {
       const cuenta = await cuentasAPI.obtenerPorId(id);
       return normalizarCuenta(cuenta);
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -224,23 +231,23 @@ export class ServicioAlmacenamiento {
    */
   async importarDatos(datosJson: string, sobrescribir: boolean = false): Promise<{ exito: boolean; mensaje: string; cuentasImportadas?: number }> {
     try {
-      const datosImportados = JSON.parse(datosJson);
+      const datosImportados = JSON.parse(datosJson) as { cuentas?: CuentaCruda[] } & Record<string, unknown>;
       
       // Convertir fechas si es necesario
       if (datosImportados.cuentas) {
-        datosImportados.cuentas = datosImportados.cuentas.map((cuenta: any) => ({
+        datosImportados.cuentas = datosImportados.cuentas.map((cuenta: CuentaCruda) => ({
           ...cuenta,
-          fechaVencimiento: new Date(cuenta.fechaVencimiento),
-          fechaCreacion: new Date(cuenta.fechaCreacion),
-          fechaActualizacion: cuenta.fechaActualizacion ? new Date(cuenta.fechaActualizacion) : undefined,
-          fechaEmision: cuenta.fechaEmision ? new Date(cuenta.fechaEmision) : new Date(cuenta.fechaCreacion || cuenta.fechaVencimiento),
-          fechaCorte: cuenta.fechaCorte ? new Date(cuenta.fechaCorte) : new Date(cuenta.fechaVencimiento),
-          fechaLectura: cuenta.fechaLectura ? new Date(cuenta.fechaLectura) : new Date(cuenta.fechaVencimiento),
-          proximaFechaLectura: cuenta.proximaFechaLectura ? new Date(cuenta.proximaFechaLectura) : undefined,
-          saldoAnterior: cuenta.saldoAnterior || 0,
-          consumoActual: cuenta.consumoActual || cuenta.monto || 0,
-          otrosCargos: cuenta.otrosCargos || 0,
-          descuentos: cuenta.descuentos || 0
+          fechaVencimiento: obtenerFecha(cuenta.fechaVencimiento, new Date()),
+          fechaCreacion: obtenerFecha(cuenta.fechaCreacion, new Date()),
+          fechaActualizacion: cuenta.fechaActualizacion ? obtenerFecha(cuenta.fechaActualizacion, new Date()) : undefined,
+          fechaEmision: obtenerFecha(cuenta.fechaEmision, obtenerFecha(cuenta.fechaCreacion || cuenta.fechaVencimiento, new Date())),
+          fechaCorte: obtenerFecha(cuenta.fechaCorte, obtenerFecha(cuenta.fechaVencimiento, new Date())),
+          fechaLectura: obtenerFecha(cuenta.fechaLectura, obtenerFecha(cuenta.fechaVencimiento, new Date())),
+          proximaFechaLectura: cuenta.proximaFechaLectura ? obtenerFecha(cuenta.proximaFechaLectura, new Date()) : undefined,
+          saldoAnterior: obtenerNumero(cuenta.saldoAnterior),
+          consumoActual: obtenerNumero(cuenta.consumoActual, obtenerNumero(cuenta.monto)),
+          otrosCargos: obtenerNumero(cuenta.otrosCargos),
+          descuentos: obtenerNumero(cuenta.descuentos)
         }));
       }
 

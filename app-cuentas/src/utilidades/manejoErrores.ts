@@ -139,7 +139,7 @@ export class ManejadorErrores {
           actions: ['Datos reiniciados'],
           dataLoss: true
         };
-      } catch (cleanError) {
+      } catch {
         return {
           success: false,
           message: 'No se pudo recuperar la aplicación. Intenta limpiar manualmente los datos del navegador.'

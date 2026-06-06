@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { ConfiguracionUsuario } from '../tipos';
 import { servicioAlmacenamiento } from '../servicios/almacenamiento';
@@ -129,17 +129,17 @@ export const ConfiguracionProvider: React.FC<ConfiguracionProviderProps> = ({ ch
   const [estado, dispatch] = useReducer(reducerConfiguracion, estadoInicial);
 
   // Aplicar tema al documento
-  const aplicarTema = (temaOscuro: boolean): void => {
+  const aplicarTema = useCallback((temaOscuro: boolean): void => {
     const root = document.documentElement;
     if (temaOscuro) {
       root.classList.add('tema-oscuro');
     } else {
       root.classList.remove('tema-oscuro');
     }
-  };
+  }, []);
 
   // Cargar configuración desde el almacenamiento
-  const cargarConfiguracion = async (): Promise<void> => {
+  const cargarConfiguracion = useCallback(async (): Promise<void> => {
     try {
       dispatch({ tipo: 'ESTABLECER_CARGANDO', payload: true });
       
@@ -152,10 +152,10 @@ export const ConfiguracionProvider: React.FC<ConfiguracionProviderProps> = ({ ch
       const mensaje = error instanceof Error ? error.message : 'Error al cargar la configuración';
       dispatch({ tipo: 'ESTABLECER_ERROR', payload: mensaje });
     }
-  };
+  }, [aplicarTema]);
 
   // Actualizar configuración
-  const actualizarConfiguracion = async (nuevaConfiguracion: Partial<ConfiguracionUsuario>): Promise<ConfiguracionUsuario> => {
+  const actualizarConfiguracion = useCallback(async (nuevaConfiguracion: Partial<ConfiguracionUsuario>): Promise<ConfiguracionUsuario> => {
     try {
       const configuracionActualizada = servicioAlmacenamiento.actualizarConfiguracion(nuevaConfiguracion);
       dispatch({ tipo: 'ACTUALIZAR_CONFIGURACION', payload: nuevaConfiguracion });
@@ -171,10 +171,10 @@ export const ConfiguracionProvider: React.FC<ConfiguracionProviderProps> = ({ ch
       dispatch({ tipo: 'ESTABLECER_ERROR', payload: mensaje });
       throw error;
     }
-  };
+  }, [aplicarTema]);
 
   // Alternar tema
-  const alternarTema = async (): Promise<void> => {
+  const alternarTema = useCallback(async (): Promise<void> => {
     try {
       const nuevoTema = !estado.configuracion.temaOscuro;
       await actualizarConfiguracion({ temaOscuro: nuevoTema });
@@ -183,10 +183,10 @@ export const ConfiguracionProvider: React.FC<ConfiguracionProviderProps> = ({ ch
       dispatch({ tipo: 'ESTABLECER_ERROR', payload: mensaje });
       throw error;
     }
-  };
+  }, [actualizarConfiguracion, estado.configuracion.temaOscuro]);
 
   // Alternar recordatorios
-  const alternarRecordatorios = async (): Promise<void> => {
+  const alternarRecordatorios = useCallback(async (): Promise<void> => {
     try {
       const nuevosRecordatorios = !estado.configuracion.recordatoriosActivos;
       await actualizarConfiguracion({ recordatoriosActivos: nuevosRecordatorios });
@@ -195,10 +195,10 @@ export const ConfiguracionProvider: React.FC<ConfiguracionProviderProps> = ({ ch
       dispatch({ tipo: 'ESTABLECER_ERROR', payload: mensaje });
       throw error;
     }
-  };
+  }, [actualizarConfiguracion, estado.configuracion.recordatoriosActivos]);
 
   // Establecer moneda
-  const establecerMoneda = async (moneda: string): Promise<void> => {
+  const establecerMoneda = useCallback(async (moneda: string): Promise<void> => {
     try {
       if (!moneda.trim()) {
         throw new Error('La moneda no puede estar vacía');
@@ -209,10 +209,10 @@ export const ConfiguracionProvider: React.FC<ConfiguracionProviderProps> = ({ ch
       dispatch({ tipo: 'ESTABLECER_ERROR', payload: mensaje });
       throw error;
     }
-  };
+  }, [actualizarConfiguracion]);
 
   // Resetear configuración a valores por defecto
-  const resetearConfiguracion = async (): Promise<void> => {
+  const resetearConfiguracion = useCallback(async (): Promise<void> => {
     try {
       await actualizarConfiguracion(configuracionPorDefecto);
     } catch (error) {
@@ -220,17 +220,17 @@ export const ConfiguracionProvider: React.FC<ConfiguracionProviderProps> = ({ ch
       dispatch({ tipo: 'ESTABLECER_ERROR', payload: mensaje });
       throw error;
     }
-  };
+  }, [actualizarConfiguracion]);
 
   // Cargar configuración al montar el componente
   useEffect(() => {
     cargarConfiguracion();
-  }, []);
+  }, [cargarConfiguracion]);
 
   // Aplicar tema cuando cambie la configuración
   useEffect(() => {
     aplicarTema(estado.configuracion.temaOscuro);
-  }, [estado.configuracion.temaOscuro]);
+  }, [aplicarTema, estado.configuracion.temaOscuro]);
 
   // Valor del contexto
   const valorContexto: ContextoConfiguracion = {

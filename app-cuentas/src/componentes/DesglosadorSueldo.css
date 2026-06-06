@@ -125,7 +125,7 @@
 }
 
 .tema-oscuro .resumen-item .valor.positivo {
-         color: #34d399;.Value ;
+    color: #34d399;
 }
 
 .tema-oscuro .resumen-item .valor.negativo {
@@ -212,7 +212,7 @@
 
 .tipo-suscripcion {
     background: #e0e7ff;
-         color: #4338ca;.Value ;
+    color: #4338ca;
 }
 
 .tipo-cuenta {
@@ -233,7 +233,7 @@
 /* Ajustes para modo oscuro */
 .tema-oscuro .tipo-pago {
     background: rgba(2, 132, 199, 0.2);
-         color: #38bdf8;.Value ;
+    color: #38bdf8;
 }
 
 .tema-oscuro .tipo-compra {
@@ -307,7 +307,7 @@
 
 .tema-oscuro .btn-editar {
     background: rgba(2, 132, 199, 0.2);
-         color: #38bdf8;.Value ;
+    color: #38bdf8;
 }
 
 .tema-oscuro .btn-editar:hover {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BottomNavigation, Sidebar, Breadcrumbs } from './navegacion';
 import AlternadorTema from './AlternadorTema';
+import { useAuth } from '../contextos/AuthContext';
 import type { NavegacionItem, BreadcrumbItem } from './navegacion';
 import './LayoutModerno.css';
 
@@ -17,6 +18,7 @@ export const LayoutModerno: React.FC<LayoutModernoProps> = ({
   breadcrumbs = []
 }) => {
   const navigate = useNavigate();
+  const { usuario, firebaseActivo, cerrarSesion } = useAuth();
   const [sidebarColapsado, setSidebarColapsado] = useState(false);
   const [esMobile, setEsMobile] = useState(false);
 
@@ -85,6 +87,21 @@ export const LayoutModerno: React.FC<LayoutModernoProps> = ({
             />
           )}
           <div className="layout-moderno__header-acciones">
+            {firebaseActivo && usuario && (
+              <div className="layout-moderno__usuario">
+                {usuario.photoURL ? (
+                  <img src={usuario.photoURL} alt="" className="layout-moderno__avatar" />
+                ) : (
+                  <span className="layout-moderno__avatar layout-moderno__avatar--fallback">
+                    {usuario.displayName?.charAt(0) || usuario.email?.charAt(0) || 'U'}
+                  </span>
+                )}
+                <span className="layout-moderno__email">{usuario.email}</span>
+                <button className="layout-moderno__salir" type="button" onClick={cerrarSesion}>
+                  Salir
+                </button>
+              </div>
+            )}
             <AlternadorTema />
           </div>
         </div>

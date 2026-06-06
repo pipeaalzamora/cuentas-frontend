@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './Toast.css';
 
@@ -36,6 +36,13 @@ const Toast: React.FC<ToastProps> = ({
   const [visible, setVisible] = useState(false);
   const [saliendo, setSaliendo] = useState(false);
 
+  const cerrarToast = useCallback(() => {
+    setSaliendo(true);
+    setTimeout(() => {
+      onCerrar(id);
+    }, 300); // Duración de la animación de salida
+  }, [id, onCerrar]);
+
   useEffect(() => {
     // Mostrar toast con animación
     const timer = setTimeout(() => setVisible(true), 10);
@@ -52,14 +59,7 @@ const Toast: React.FC<ToastProps> = ({
       clearTimeout(timer);
       if (autoCloseTimer) clearTimeout(autoCloseTimer);
     };
-  }, [duracion]);
-
-  const cerrarToast = () => {
-    setSaliendo(true);
-    setTimeout(() => {
-      onCerrar(id);
-    }, 300); // Duración de la animación de salida
-  };
+  }, [cerrarToast, duracion]);
 
   const obtenerIcono = () => {
     switch (tipo) {

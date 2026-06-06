@@ -8,7 +8,7 @@ export const calculadoraGastosAPI = {
   },
 
   // Agregar un gasto
-  agregarGasto: async (gasto: { titulo: string; monto: number; cantidad: number }) => {
+  agregarGasto: async (gasto: { titulo: string; monto: number; cantidad: number; mes?: number; año?: number }) => {
     const response = await api.post('/calculadora-gastos/gastos', gasto);
     return response.data;
   },
