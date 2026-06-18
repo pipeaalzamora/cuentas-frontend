@@ -73,8 +73,9 @@ class ServicioPrediccionGastos {
     for (let i = 1; i <= cantidadMeses; i++) {
       const mes = (fechaActual.getMonth() + i) % 12;
       const año = fechaActual.getFullYear() + Math.floor((fechaActual.getMonth() + i) / 12);
-      
-      const prediccion = this.predecirMesFuturo(cuentas, mes, año, configuracion);
+
+      // i = cuántos meses hacia el futuro, para acumular inflación correctamente
+      const prediccion = this.predecirMesFuturo(cuentas, mes, año, configuracion, i);
       predicciones.push(prediccion);
     }
 
@@ -88,14 +89,15 @@ class ServicioPrediccionGastos {
     cuentas: CuentaServicio[],
     mes: number,
     año: number,
-    configuracion?: Partial<ConfiguracionPrediccion>
+    configuracion?: Partial<ConfiguracionPrediccion>,
+    mesesHaciaFuturo: number = 1
   ): PrediccionMensual {
     const config = { ...this.configuracionDefault, ...configuracion };
     const datosHistoricos = this.extraerDatosHistoricos(cuentas, config.mesesHistoricos);
     const servicios: TipoServicio[] = ['luz', 'agua', 'gas', 'internet'];
     
     const prediccionesPorServicio: PrediccionServicio[] = servicios.map(servicio => {
-      return this.predecirServicio(servicio, datosHistoricos, mes, config);
+      return this.predecirServicio(servicio, datosHistoricos, mes, config, mesesHaciaFuturo);
     });
 
     const totalPredicho = prediccionesPorServicio.reduce(
@@ -125,7 +127,8 @@ class ServicioPrediccionGastos {
     servicio: TipoServicio,
     datosHistoricos: DatosHistoricos[],
     mesFuturo: number,
-    config: ConfiguracionPrediccion
+    config: ConfiguracionPrediccion,
+    mesesHaciaFuturo: number = 1
   ): PrediccionServicio {
     const datosServicio = datosHistoricos.filter(d => d.servicio === servicio);
 
@@ -155,10 +158,9 @@ class ServicioPrediccionGastos {
       montoPredicho *= factorEstacional;
     }
 
-    // Ajustar por inflación si está habilitado
+    // Ajustar por inflación si está habilitado (acumulada según meses al futuro)
     if (config.ajustarInflacion && config.tasaInflacionAnual) {
-      const mesesFuturos = 1;
-      const factorInflacion = 1 + (config.tasaInflacionAnual / 12) * mesesFuturos;
+      const factorInflacion = Math.pow(1 + config.tasaInflacionAnual / 12, mesesHaciaFuturo);
       montoPredicho *= factorInflacion;
     }
 

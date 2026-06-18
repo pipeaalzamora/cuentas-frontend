@@ -8,6 +8,7 @@ import {
 } from './graficos';
 import Tarjeta from './base/Tarjeta';
 import Boton from './base/Boton';
+import WidgetIndicadores from './WidgetIndicadores';
 import { SkeletonEstadisticas, SkeletonGrafico } from './base/Skeleton';
 import { useLoading } from '../utilidades/useLoading';
 import { formatearPesosChilenos, obtenerNombreMes } from '../utilidades/formatoChileno';
@@ -135,7 +136,7 @@ const PanelEstadisticas: React.FC = () => {
           <h3>Filtros de Período</h3>
           <div className="filtros-grid">
             {Array.from({ length: 3 }, (_, i) => (
-              <div key={i} style={{ height: '60px', backgroundColor: '#f0f0f0', borderRadius: '4px' }} />
+              <div key={i} style={{ height: '60px', backgroundColor: 'var(--color-superficie-2)', borderRadius: '4px' }} />
             ))}
           </div>
         </Tarjeta>
@@ -160,6 +161,9 @@ const PanelEstadisticas: React.FC = () => {
 
   return (
     <div className="panel-estadisticas">
+      {/* Indicadores económicos (mindicador.cl) */}
+      <WidgetIndicadores />
+
       {/* Filtros de período */}
       <Tarjeta className="filtros-periodo">
         <h3>Filtros de Período</h3>

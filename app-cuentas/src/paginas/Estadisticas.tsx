@@ -1,5 +1,5 @@
 import React from 'react';
-import { PanelEstadisticas } from '../componentes';
+import { PanelEstadisticas, PanelPredicciones } from '../componentes';
 
 export const Estadisticas: React.FC = () => {
   return (
@@ -8,6 +8,7 @@ export const Estadisticas: React.FC = () => {
         <h1>Estadísticas y Análisis</h1>
       </div>
       <PanelEstadisticas />
+      <PanelPredicciones />
     </div>
   );
 };

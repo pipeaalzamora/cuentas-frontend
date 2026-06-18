@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import type { DesgloseSueldo, Gasto, TipoGasto } from '../tipos/desglosador';
+import type { DesgloseSueldo, Gasto, TipoGasto, ResumenConsolidado } from '../tipos/desglosador';
 import { servicioDesglosadorSueldo } from '../servicios/desglosadorSueldo';
 import { desgloseSueldoAPI } from '../servicios/desgloseSueldoAPI';
 import { servicioGeneradorPDF } from '../servicios/generadorPDF';
@@ -7,6 +7,13 @@ import { Boton, Input, Tarjeta, Modal } from './index';
 import { usePeriodo } from '../contextos/PeriodoContext';
 import '../estilos/botones-modernos.css';
 import './DesglosadorSueldo.css';
+
+const NOMBRE_SERVICIO: Record<string, string> = {
+  luz: 'Luz',
+  agua: 'Agua',
+  gas: 'Gas',
+  internet: 'Internet'
+};
 
 const formatearPesosChilenos = (monto: number): string => {
   return new Intl.NumberFormat('es-CL', {
@@ -31,6 +38,7 @@ const DesglosadorSueldo: React.FC = () => {
   const { mes: mesGlobal, año: añoGlobal, cambiarPeriodo } = usePeriodo();
   const [desgloseActual, setDesgloseActual] = useState<DesgloseSueldo | null>(null);
   const [todosDesgloses, setTodosDesgloses] = useState<DesgloseSueldo[]>([]);
+  const [resumen, setResumen] = useState<ResumenConsolidado | null>(null);
   const [sueldoInicial, setSueldoInicial] = useState<string>('');
   const [nombreDesglose, setNombreDesglose] = useState<string>('');
   const [mostrarFormGasto, setMostrarFormGasto] = useState(false);
@@ -66,9 +74,51 @@ const DesglosadorSueldo: React.FC = () => {
     }
   }, [añoGlobal, cargarDesglosePorPeriodo, mesGlobal]);
 
+  // Obtiene del backend el resumen consolidado (sueldo + cuentas del mes + supermercado).
+  // El backend es la fuente de verdad de la interconexión.
+  const cargarResumenConsolidado = useCallback(async (desgloseId: string | undefined) => {
+    if (!desgloseId) {
+      setResumen(null);
+      return;
+    }
+    try {
+      const data = await desgloseSueldoAPI.obtenerResumenConsolidado(desgloseId);
+      setResumen({
+        sueldoInicial: data.sueldoInicial || 0,
+        totalGastos: data.totalGastos || 0,
+        totalGastosBebe: data.totalGastosBebe || 0,
+        totalGastosGenerales: data.totalGastosGenerales || 0,
+        totalDescuentos: data.totalDescuentos || 0,
+        saldoRestante: data.saldoRestante || 0,
+        gastosPorTipo: data.gastosPorTipo || {
+          pago: 0, compra: 0, suscripcion: 0, cuenta: 0, deuda: 0, otro: 0
+        },
+        porcentajeGastado: data.porcentajeGastado || 0,
+        cuentasReflejadas: data.cuentasReflejadas || [],
+        totalCuentas: data.totalCuentas || 0,
+        totalSupermercado: data.totalSupermercado || 0,
+        totalDescuentosConsolidado: data.totalDescuentosConsolidado || 0,
+        saldoDisponible: data.saldoDisponible || 0,
+        porcentajeGastadoConsolidado: data.porcentajeGastadoConsolidado || 0
+      });
+    } catch (error) {
+      console.error('Error al cargar resumen consolidado:', error);
+      // Fallback: cálculo local solo con los gastos del desglose
+      if (desgloseActual) {
+        const base = servicioDesglosadorSueldo.calcularResumenConsolidado(desgloseActual, [], 0);
+        setResumen(base);
+      }
+    }
+  }, [desgloseActual]);
+
   useEffect(() => {
     cargarDesgloses();
   }, [cargarDesgloses]);
+
+  // Recargar resumen consolidado cuando cambia el desglose seleccionado
+  useEffect(() => {
+    cargarResumenConsolidado(desgloseActual?.id);
+  }, [desgloseActual, cargarResumenConsolidado]);
 
   useEffect(() => {
     if (todosDesgloses.length > 0) {
@@ -181,10 +231,8 @@ const DesglosadorSueldo: React.FC = () => {
   };
 
   const generarPDF = () => {
-    if (!desgloseActual) return;
-    
-    const resumen = servicioDesglosadorSueldo.calcularResumen(desgloseActual);
-    servicioGeneradorPDF.generarReporteDesglose(desgloseActual, resumen);
+    if (!desgloseActual || !resumen) return;
+    servicioGeneradorPDF.generarReporteDesglose(desgloseActual, resumen, resumen);
   };
 
   const editarSueldo = async () => {
@@ -287,8 +335,6 @@ const DesglosadorSueldo: React.FC = () => {
     return opciones;
   };
 
-  const resumen = desgloseActual ? servicioDesglosadorSueldo.calcularResumen(desgloseActual) : null;
-
   if (!desgloseActual) {
     return (
       <div className="desglosador-container">
@@ -383,31 +429,66 @@ const DesglosadorSueldo: React.FC = () => {
             <span className="valor positivo">{formatearPesosChilenos(resumen?.sueldoInicial || 0)}</span>
           </div>
           <div className="resumen-item">
-            <span className="label">Total Gastos:</span>
+            <span className="label">Gastos Propios:</span>
             <span className="valor negativo">-{formatearPesosChilenos(resumen?.totalGastos || 0)}</span>
           </div>
           <div className="resumen-item">
-            <span className="label">Total Descuentos:</span>
-            <span className="valor negativo">-{formatearPesosChilenos(resumen?.totalDescuentos || 0)}</span>
+            <span className="label">Cuentas del Mes:</span>
+            <span className="valor negativo">-{formatearPesosChilenos(resumen?.totalCuentas || 0)}</span>
+          </div>
+          <div className="resumen-item">
+            <span className="label">Supermercado:</span>
+            <span className="valor negativo">-{formatearPesosChilenos(resumen?.totalSupermercado || 0)}</span>
           </div>
           <div className="resumen-item destacado">
-            <span className="label">Saldo Restante:</span>
-            <span className={`valor ${(resumen?.saldoRestante || 0) >= 0 ? 'positivo' : 'negativo'}`}>
-              {formatearPesosChilenos(resumen?.saldoRestante || 0)}
+            <span className="label">Saldo Disponible:</span>
+            <span className={`valor ${(resumen?.saldoDisponible || 0) >= 0 ? 'positivo' : 'negativo'}`}>
+              {formatearPesosChilenos(resumen?.saldoDisponible || 0)}
             </span>
           </div>
           <div className="resumen-item">
             <span className="label">Gastado:</span>
-            <span className="valor">{resumen?.porcentajeGastado.toFixed(1)}%</span>
+            <span className="valor">{resumen?.porcentajeGastadoConsolidado.toFixed(1)}%</span>
           </div>
         </div>
 
         <div className="barra-progreso">
           <div 
             className="barra-progreso-fill"
-            style={{ width: `${Math.min(resumen?.porcentajeGastado || 0, 100)}%` }}
+            style={{ width: `${Math.min(resumen?.porcentajeGastadoConsolidado || 0, 100)}%` }}
           />
         </div>
+
+        {/* Cuentas y supermercado reflejados (solo lectura) */}
+        {((resumen?.cuentasReflejadas.length || 0) > 0 || (resumen?.totalSupermercado || 0) > 0) && (
+          <div className="reflejados">
+            <h3 className="reflejados-titulo">
+              Descuentos automáticos del mes
+              <span className="reflejados-hint">Se actualizan solos desde Cuentas y Supermercado</span>
+            </h3>
+            <div className="reflejados-grid">
+              {resumen?.cuentasReflejadas.map(cuenta => (
+                <div key={cuenta.id} className="reflejado-item">
+                  <div className="reflejado-info">
+                    <span className={`reflejado-tag servicio-${cuenta.servicio}`}>
+                      {NOMBRE_SERVICIO[cuenta.servicio] || cuenta.servicio}
+                    </span>
+                    {cuenta.pagada && <span className="reflejado-estado">Pagada</span>}
+                  </div>
+                  <span className="reflejado-monto">-{formatearPesosChilenos(cuenta.monto)}</span>
+                </div>
+              ))}
+              {(resumen?.totalSupermercado || 0) > 0 && (
+                <div className="reflejado-item">
+                  <div className="reflejado-info">
+                    <span className="reflejado-tag servicio-super">🛒 Supermercado</span>
+                  </div>
+                  <span className="reflejado-monto">-{formatearPesosChilenos(resumen?.totalSupermercado || 0)}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="acciones">
           <button 

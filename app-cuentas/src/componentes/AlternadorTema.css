@@ -17,14 +17,14 @@
 }
 
 .alternador-tema:hover {
-  border-color: #ffffff;
+  border-color: var(--color-primario);
   box-shadow: var(--sombra-md);
   transform: translateY(-1px);
 }
 
 .alternador-tema:focus {
   outline: none;
-  border-color: #ffffff;
+  border-color: var(--color-primario);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
 }
 

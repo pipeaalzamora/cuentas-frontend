@@ -148,8 +148,8 @@
 /* Ghost */
 .boton-moderno--ghost {
   background: transparent;
-  color: #ffffff;
-  border: 2px solid #ffffff;
+  color: var(--color-texto);
+  border: 2px solid var(--color-borde-hover);
 }
 
 .boton-moderno--ghost:hover:not(:disabled) {

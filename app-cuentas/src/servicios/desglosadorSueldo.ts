@@ -1,4 +1,5 @@
-import type { DesgloseSueldo, ResumenDesglose, TipoGasto } from '../tipos/desglosador';
+import type { DesgloseSueldo, ResumenDesglose, ResumenConsolidado, CuentaReflejada, TipoGasto } from '../tipos/desglosador';
+import type { CuentaServicio } from '../tipos';
 import { desgloseSueldoAPI } from './desgloseSueldoAPI';
 
 class ServicioDesglosadorSueldo {
@@ -90,6 +91,52 @@ class ServicioDesglosadorSueldo {
       saldoRestante,
       gastosPorTipo,
       porcentajeGastado: desglose.sueldoInicial > 0 ? (totalDescuentos / desglose.sueldoInicial) * 100 : 0
+    };
+  }
+
+  /**
+   * Calcula el resumen consolidado cruzando el desglose de sueldo con las cuentas
+   * de servicios del mismo período y el total del carrito de supermercado.
+   *
+   * Las cuentas y el supermercado se reflejan como descuentos del sueldo SIN
+   * duplicar datos: siguen viviendo en sus propios módulos, aquí solo se leen.
+   */
+  calcularResumenConsolidado(
+    desglose: DesgloseSueldo,
+    cuentas: CuentaServicio[],
+    totalSupermercado: number
+  ): ResumenConsolidado {
+    const base = this.calcularResumen(desglose);
+
+    // Cuentas del mismo mes/año del desglose
+    const cuentasDelPeriodo = cuentas.filter(
+      c => c.mes === desglose.mes && c.año === desglose.año
+    );
+
+    const cuentasReflejadas: CuentaReflejada[] = cuentasDelPeriodo.map(c => ({
+      id: c.id,
+      servicio: c.servicio,
+      monto: c.monto,
+      pagada: c.pagada
+    }));
+
+    const totalCuentas = cuentasReflejadas.reduce((sum, c) => sum + c.monto, 0);
+    const totalSuper = Math.max(0, totalSupermercado);
+
+    const totalDescuentosConsolidado = base.totalDescuentos + totalCuentas + totalSuper;
+    const saldoDisponible = desglose.sueldoInicial - totalDescuentosConsolidado;
+    const porcentajeGastadoConsolidado = desglose.sueldoInicial > 0
+      ? (totalDescuentosConsolidado / desglose.sueldoInicial) * 100
+      : 0;
+
+    return {
+      ...base,
+      cuentasReflejadas,
+      totalCuentas,
+      totalSupermercado: totalSuper,
+      totalDescuentosConsolidado,
+      saldoDisponible,
+      porcentajeGastadoConsolidado
     };
   }
 }

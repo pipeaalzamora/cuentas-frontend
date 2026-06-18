@@ -5,11 +5,11 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.92);
+  background: var(--glass-bg);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border-top: 1px solid rgba(0, 255, 136, 0.1);
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.6);
+  border-top: 1px solid var(--color-borde);
+  box-shadow: var(--sombra-lg);
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom);
   animation: slideUpFromBottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);

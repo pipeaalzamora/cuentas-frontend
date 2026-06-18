@@ -52,7 +52,7 @@
 .dashboard-moderno__titulo h1 {
   font-size: 1.625rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-texto);
   letter-spacing: -0.03em;
   margin-bottom: 0.25rem;
   animation: fadeIn 0.4s ease-out both;
@@ -121,7 +121,7 @@
 .tarjeta-stat__valor {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-texto);
   font-family: 'Fira Code', monospace;
   white-space: nowrap;
   overflow: hidden;
@@ -219,7 +219,7 @@
 .alerta-moderna__contenido h4 {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--color-texto);
   margin-bottom: 0.25rem;
 }
 
@@ -259,7 +259,7 @@
 }
 
 .ranking-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-hover);
   border-color: rgba(255, 255, 255, 0.08);
   transform: translateX(4px);
 }
@@ -305,7 +305,7 @@
 .ranking-item__info h4 {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--color-texto);
   margin-bottom: 0.125rem;
 }
 
@@ -318,7 +318,7 @@
 .ranking-item__monto {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-texto);
   font-family: 'Fira Code', monospace;
   white-space: nowrap;
   transition: color var(--transition-fast);

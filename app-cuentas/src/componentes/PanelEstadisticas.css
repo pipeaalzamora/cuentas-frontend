@@ -57,7 +57,7 @@
   border-radius: 8px;
   background: rgba(255,255,255,0.04);
   font-size: 0.875rem;
-  color: #F8FAFC;
+  color: var(--color-texto);
   transition: all 0.18s ease;
   cursor: pointer;
   appearance: none;
@@ -67,7 +67,7 @@
   color-scheme: dark;
 }
 
-.filtro-grupo select option { background: #0D0D0D; color: #F8FAFC; }
+.filtro-grupo select option { background: var(--color-superficie); color: var(--color-texto); }
 
 .filtro-grupo select:focus {
   outline: none;
@@ -137,7 +137,7 @@
 .metrica-valor {
   font-size: 1.625rem;
   font-weight: 700;
-  color: #F8FAFC;
+  color: var(--color-texto);
   margin-bottom: 0.25rem;
   font-variant-numeric: tabular-nums;
   transition: color 0.18s ease;

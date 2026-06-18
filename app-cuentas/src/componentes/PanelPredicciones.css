@@ -248,3 +248,30 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Toggle de ajuste por inflación */
+.predicciones-inflacion-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-superficie-2);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-md);
+    cursor: pointer;
+    font-size: var(--texto-sm);
+    color: var(--color-texto-secundario);
+    transition: border-color var(--transicion-rapida);
+}
+
+.predicciones-inflacion-toggle:hover {
+    border-color: var(--color-borde-hover);
+}
+
+.predicciones-inflacion-toggle input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--color-primario);
+    cursor: pointer;
+}

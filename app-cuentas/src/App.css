@@ -1,5 +1,5 @@
 .app {
   min-height: 100vh;
-  background-color: #000000;
-  color: #ffffff;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
 }

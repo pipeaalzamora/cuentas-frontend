@@ -5,7 +5,7 @@ import type {
   ConfiguracionReporte, 
   EstadisticasMensuales 
 } from '../tipos';
-import type { DesgloseSueldo, ResumenDesglose } from '../tipos/desglosador';
+import type { DesgloseSueldo, ResumenDesglose, ResumenConsolidado } from '../tipos/desglosador';
 import { servicioCalculosEstadisticas } from './calculosEstadisticas';
 import { format } from 'date-fns';
 
@@ -457,9 +457,15 @@ export class ServicioGeneradorPDF {
   }
 
   /**
-   * Genera un reporte PDF del desglose de sueldo
+   * Genera un reporte PDF del desglose de sueldo.
+   * Si se pasa `consolidado`, incluye una sección con las cuentas de servicios
+   * y el supermercado reflejados, además del saldo disponible final.
    */
-  generarReporteDesglose(desglose: DesgloseSueldo, resumen: ResumenDesglose): void {
+  generarReporteDesglose(
+    desglose: DesgloseSueldo,
+    resumen: ResumenDesglose,
+    consolidado?: ResumenConsolidado
+  ): void {
     const pdf = new jsPDF(ServicioGeneradorPDF.CONFIG_PDF);
     
     const formatearPesosChilenos = (monto: number): string => {
@@ -511,6 +517,50 @@ export class ServicioGeneradorPDF {
     y += 8;
     pdf.setFontSize(11);
     pdf.text(`Porcentaje Gastado: ${resumen.porcentajeGastado.toFixed(1)}%`, 20, y);
+
+    // Sección consolidada: cuentas de servicios + supermercado + saldo disponible
+    if (consolidado) {
+      y += 15;
+      if (y > 250) { pdf.addPage(); y = 20; }
+      pdf.setFontSize(14);
+      pdf.text('Descuentos Automaticos del Mes', 20, y);
+
+      y += 10;
+      pdf.setFontSize(11);
+
+      if (consolidado.cuentasReflejadas.length > 0) {
+        consolidado.cuentasReflejadas.forEach(cuenta => {
+          if (y > 270) { pdf.addPage(); y = 20; }
+          const nombre = cuenta.servicio.charAt(0).toUpperCase() + cuenta.servicio.slice(1);
+          const estado = cuenta.pagada ? ' (pagada)' : '';
+          pdf.text(`${nombre}${estado}`, 25, y);
+          pdf.text(formatearPesosChilenos(cuenta.monto), 150, y);
+          y += 7;
+        });
+        if (y > 270) { pdf.addPage(); y = 20; }
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Total Cuentas:', 25, y);
+        pdf.text(formatearPesosChilenos(consolidado.totalCuentas), 150, y);
+        pdf.setFont('helvetica', 'normal');
+        y += 9;
+      }
+
+      if (consolidado.totalSupermercado > 0) {
+        if (y > 270) { pdf.addPage(); y = 20; }
+        pdf.text('Supermercado:', 25, y);
+        pdf.text(formatearPesosChilenos(consolidado.totalSupermercado), 150, y);
+        y += 9;
+      }
+
+      if (y > 260) { pdf.addPage(); y = 20; }
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`Saldo Disponible: ${formatearPesosChilenos(consolidado.saldoDisponible)}`, 20, y);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(11);
+      y += 7;
+      pdf.text(`Gastado (consolidado): ${consolidado.porcentajeGastadoConsolidado.toFixed(1)}%`, 20, y);
+    }
     
     // Gastos por tipo
     y += 15;

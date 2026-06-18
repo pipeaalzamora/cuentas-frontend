@@ -1,37 +1,49 @@
 // Componente para mostrar predicciones de gastos futuros
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useCuentas } from '../utilidades/hooks';
 import { servicioPrediccionGastos } from '../servicios/prediccionGastos';
+import { bancoCentralAPI } from '../servicios/bancoCentralAPI';
+import { formatearPesosChilenos } from '../utilidades/formatoChileno';
 import type { PrediccionMensual, TipoServicio } from '../tipos';
 import './PanelPredicciones.css';
 
 export const PanelPredicciones: React.FC = () => {
   const { cuentas } = useCuentas();
 
+  // Inflación oficial del Banco Central (si está configurada en el backend)
+  const [tasaInflacion, setTasaInflacion] = useState<number | null>(null);
+  const [usarInflacion, setUsarInflacion] = useState(false);
+
+  useEffect(() => {
+    let activo = true;
+    bancoCentralAPI.obtenerInflacion().then(data => {
+      if (activo && data?.configurado) {
+        setTasaInflacion(data.tasaDecimal);
+        setUsarInflacion(true);
+      }
+    });
+    return () => { activo = false; };
+  }, []);
+
+  const configPrediccion = useMemo(() => ({
+    mesesHistoricos: 6,
+    factorEstacionalidad: true,
+    ajustarInflacion: usarInflacion && tasaInflacion != null,
+    tasaInflacionAnual: tasaInflacion ?? 0.05
+  }), [usarInflacion, tasaInflacion]);
+
   // Calcular predicción para el próximo mes
   const prediccionProximoMes = useMemo<PrediccionMensual>(() => {
-    return servicioPrediccionGastos.predecirProximoMes(cuentas, {
-      mesesHistoricos: 6,
-      factorEstacionalidad: true,
-      ajustarInflacion: false
-    });
-  }, [cuentas]);
+    return servicioPrediccionGastos.predecirProximoMes(cuentas, configPrediccion);
+  }, [cuentas, configPrediccion]);
 
   // Calcular predicciones para los próximos 3 meses
   const prediccionesMultiples = useMemo<PrediccionMensual[]>(() => {
-    return servicioPrediccionGastos.predecirMultiplesMeses(cuentas, 3, {
-      mesesHistoricos: 6,
-      factorEstacionalidad: true
-    });
-  }, [cuentas]);
+    return servicioPrediccionGastos.predecirMultiplesMeses(cuentas, 3, configPrediccion);
+  }, [cuentas, configPrediccion]);
 
   const formatearMoneda = (monto: number): string => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(monto);
+    return formatearPesosChilenos(monto);
   };
 
   const formatearMes = (mes: number): string => {
@@ -99,6 +111,18 @@ export const PanelPredicciones: React.FC = () => {
         <p className="predicciones-descripcion">
           Basado en {prediccionProximoMes.basadoEnMeses} meses de histórico
         </p>
+        {tasaInflacion != null && (
+          <label className="predicciones-inflacion-toggle">
+            <input
+              type="checkbox"
+              checked={usarInflacion}
+              onChange={(e) => setUsarInflacion(e.target.checked)}
+            />
+            <span>
+              Ajustar por inflación oficial ({(tasaInflacion * 100).toFixed(1)}% anual · Banco Central)
+            </span>
+          </label>
+        )}
       </div>
 
       {/* Predicción del próximo mes */}

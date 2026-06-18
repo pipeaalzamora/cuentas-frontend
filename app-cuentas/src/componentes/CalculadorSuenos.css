@@ -39,7 +39,7 @@
 .calculador-suenos__header h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-texto);
   margin: 0;
   line-height: 1.2;
 }
@@ -112,7 +112,7 @@
 /* Secciones */
 .cs-seccion {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--color-borde);
   border-radius: 14px;
   padding: 1.25rem;
   display: flex;
@@ -248,7 +248,7 @@
 /* Panel resultado */
 .calculador-suenos__resultado {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--color-borde);
   border-radius: 16px;
   padding: 1.5rem;
   min-height: 400px;
@@ -275,7 +275,7 @@
 .cs-resultado-header {
   text-align: center;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--color-borde);
 }
 
 .cs-resultado-icon {
@@ -300,7 +300,7 @@
 .cs-resultado-header h2 {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-texto);
   margin: 0 0 0.25rem;
 }
 
@@ -385,7 +385,7 @@
 .cs-stat__valor {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-texto);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -453,8 +453,8 @@
 
 .cs-desglose__fila--total {
   font-weight: 700;
-  color: #FFFFFF;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-texto);
+  border-top: 1px solid var(--color-borde-hover);
   padding-top: 0.5rem;
   margin-top: 0.25rem;
 }

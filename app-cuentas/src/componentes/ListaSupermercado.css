@@ -298,7 +298,7 @@
   border-radius: 0.625rem;
   border: none;
   background: var(--color-primario, #6366f1);
-  color: #fff;
+  color: var(--color-texto-invertido);
   font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
@@ -396,7 +396,7 @@
 .lista-super__tab.activo {
   background: var(--color-primario, #6366f1);
   border-color: var(--color-primario, #6366f1);
-  color: #fff;
+  color: var(--color-texto-invertido);
 }
 
 /* --- Lista vacía --- */
@@ -482,7 +482,7 @@
   cursor: pointer;
   flex-shrink: 0;
   transition: all 0.15s ease;
-  color: #fff;
+  color: var(--color-texto-invertido);
 }
 
 .lista-super__check:hover {
@@ -571,6 +571,45 @@
   color: var(--color-texto, #0f172a);
   min-width: 1.5rem;
   text-align: center;
+}
+
+.lista-super__cantidad-input {
+  width: 2.25rem;
+  padding: 0.25rem 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-texto);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radio-sm);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.lista-super__cantidad-input:hover {
+  border-color: var(--color-borde);
+}
+
+.lista-super__cantidad-input:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  background: var(--color-superficie-2);
+}
+
+.lista-super__grupo-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.lista-super__grupo-total {
+  font-family: var(--fuente-mono);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-primario);
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 /* Eliminar */
@@ -725,7 +764,7 @@
   border-radius: 0.625rem;
   border: none;
   background: var(--color-primario, #6366f1);
-  color: #fff;
+  color: var(--color-texto-invertido);
   font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
@@ -764,28 +803,28 @@
   }
 }
 
-/* --- Dark mode overrides --- */
-:root[data-tema="claro"] .lista-super__autocomplete {
-  background: #ffffff;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+/* --- Overrides superficie (usa variables del tema) --- */
+.lista-super__autocomplete {
+  background: var(--color-superficie);
+  box-shadow: var(--sombra-lg);
 }
 
-:root[data-tema="claro"] .lista-super__autocomplete-nombre {
-  color: #0f172a;
+.lista-super__autocomplete-nombre {
+  color: var(--color-texto);
 }
 
-:root[data-tema="claro"] .lista-super__modal {
-  background: #ffffff;
+.lista-super__modal {
+  background: var(--color-superficie);
 }
 
-:root[data-tema="claro"] .lista-super__modal h3 {
-  color: #0f172a;
+.lista-super__modal h3 {
+  color: var(--color-texto);
 }
 
-:root[data-tema="claro"] .lista-super__footer {
-  background: rgba(255,255,255,0.95);
+.lista-super__footer {
+  background: var(--color-superficie);
 }
 
-:root[data-tema="claro"] .lista-super__total strong {
-  color: #0f172a;
+.lista-super__total strong {
+  color: var(--color-texto);
 }

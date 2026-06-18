@@ -13,6 +13,12 @@ export const desgloseSueldoAPI = {
     return response.data;
   },
 
+  // Obtener resumen consolidado (sueldo + cuentas del mes + supermercado)
+  obtenerResumenConsolidado: async (id: string) => {
+    const response = await api.get(`/desglose-sueldo/${id}/resumen-consolidado`);
+    return response.data;
+  },
+
   // Crear un desglose
   crear: async (desglose: { sueldoInicial: number; mes: number; año: number; nombre?: string }) => {
     const response = await api.post('/desglose-sueldo', desglose);

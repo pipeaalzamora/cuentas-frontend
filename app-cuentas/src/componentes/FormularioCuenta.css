@@ -1,10 +1,10 @@
 /* FormularioCuenta - OLED Dark + Neon + Animaciones */
 
 .formulario-cuenta {
-  background: #0D0D0D;
+  background: var(--color-superficie);
   border-radius: 12px;
   padding: 1.5rem;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--color-borde);
   max-width: 100%;
   animation: fadeInScale 0.35s ease-out both;
 }
@@ -18,7 +18,7 @@
 .formulario-cuenta__titulo {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-texto);
   margin: 0;
   letter-spacing: -0.02em;
 }
@@ -91,10 +91,10 @@
 
 .formulario-cuenta__select {
   padding: 0.5rem 0.75rem;
-  border: 1px solid rgba(255,255,255,0.07);
+  border: 1px solid var(--color-borde);
   border-radius: 8px;
-  background: #141414;
-  color: #FFFFFF;
+  background: var(--color-superficie-2);
+  color: var(--color-texto);
   font-size: 0.875rem;
   transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
   height: 38px;
@@ -102,7 +102,7 @@
 }
 
 .formulario-cuenta__select:hover:not(:disabled) {
-  border-color: rgba(255,255,255,0.12);
+  border-color: var(--color-borde-hover);
 }
 
 .formulario-cuenta__select:focus {
@@ -150,8 +150,8 @@
   color: #E0E0E0;
   padding: 0.625rem 0.875rem;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.07);
-  background: #141414;
+  border: 1px solid var(--color-borde);
+  background: var(--color-superficie-2);
   transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
   font-weight: 500;
   user-select: none;
@@ -171,9 +171,9 @@
 .formulario-cuenta__checkbox {
   width: 18px;
   height: 18px;
-  border: 1.5px solid rgba(255,255,255,0.15);
+  border: 1.5px solid var(--color-borde-hover);
   border-radius: 4px;
-  background: #0D0D0D;
+  background: var(--color-superficie);
   cursor: pointer;
   flex-shrink: 0;
   accent-color: #00FF88;

@@ -18,6 +18,7 @@ export { PanelPredicciones } from './PanelPredicciones';
 export { DashboardModerno } from './DashboardModerno';
 export { GeneradorReportes } from './GeneradorReportes';
 export { default as DesglosadorSueldo } from './DesglosadorSueldo';
+export { default as WidgetIndicadores } from './WidgetIndicadores';
 
 // Exportaciones de componentes de gráficos
 export * from './graficos';

@@ -423,3 +423,78 @@
         margin-top: 0.5rem;
     }
 }
+
+/* ===== Descuentos reflejados (cuentas + supermercado) ===== */
+.reflejados {
+    margin-bottom: 2rem;
+    padding: 1.25rem;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-lg);
+}
+
+.reflejados-titulo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0 0 1rem;
+    color: var(--color-texto);
+    font-size: var(--texto-lg);
+}
+
+.reflejados-hint {
+    font-size: var(--texto-xs);
+    font-weight: var(--peso-normal);
+    color: var(--color-texto-muted);
+}
+
+.reflejados-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+}
+
+.reflejado-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-superficie-2);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-md);
+}
+
+.reflejado-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reflejado-tag {
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radio-sm);
+    font-size: var(--texto-xs);
+    font-weight: var(--peso-semibold);
+    text-transform: capitalize;
+    background: var(--color-superficie-3);
+    color: var(--color-texto);
+}
+
+.reflejado-tag.servicio-luz { background: var(--color-luz-soft); color: var(--color-luz); }
+.reflejado-tag.servicio-agua { background: var(--color-agua-soft); color: var(--color-agua); }
+.reflejado-tag.servicio-gas { background: var(--color-gas-soft); color: var(--color-gas); }
+.reflejado-tag.servicio-internet { background: var(--color-internet-soft); color: var(--color-internet); }
+.reflejado-tag.servicio-super { background: var(--color-primario-light); color: var(--color-primario); }
+
+.reflejado-estado {
+    font-size: var(--texto-xs);
+    color: var(--color-exito);
+    font-weight: var(--peso-medium);
+}
+
+.reflejado-monto {
+    font-family: var(--fuente-mono);
+    font-weight: var(--peso-bold);
+    color: var(--color-error);
+}

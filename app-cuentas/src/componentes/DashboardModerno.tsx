@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useCuentas } from '../contextos/CuentasContext';
 import { servicioCalculosEstadisticas } from '../servicios/calculosEstadisticas';
 import { TarjetaModerna } from './base/TarjetaModerna';
+import WidgetIndicadores from './WidgetIndicadores';
 import { GraficoEvolucionMensual, GraficoDistribucionServicios } from './graficos';
 import { formatearPesosChilenos } from '../utilidades/formatoChileno';
 import { obtenerEstadisticasEstados } from '../utilidades/estadosCuentas';
@@ -123,6 +124,9 @@ export const DashboardModerno: React.FC<DashboardModernoProps> = ({ onNavegar: _
           </p>
         </div>
       </div>
+
+      {/* Indicadores económicos */}
+      <WidgetIndicadores />
 
       {/* Stats */}
       <div className="dashboard-moderno__resumen">

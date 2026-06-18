@@ -1,39 +1,65 @@
-/* Variables CSS - OLED Dark + Neon Accents */
+/* ============================================================
+   Variables CSS - Sistema de Temas (Claro por defecto + Oscuro)
+   :root            -> Tema CLARO (predeterminado)
+   .tema-oscuro     -> Tema OSCURO (OLED + neón)
+   ============================================================ */
 
 :root {
-  /* ===== FONDO OLED PURO ===== */
-  --color-fondo: #000000;
-  --color-superficie: #0D0D0D;
-  --color-superficie-2: #141414;
-  --color-superficie-3: #1A1A1A;
-  --color-superficie-hover: #1F1F1F;
-  --color-borde: rgba(255, 255, 255, 0.07);
-  --color-borde-hover: rgba(255, 255, 255, 0.15);
+  /* ===== FONDOS / SUPERFICIES (CLARO) ===== */
+  --color-fondo: #F4F5F7;
+  --color-superficie: #FFFFFF;
+  --color-superficie-2: #F9FAFB;
+  --color-superficie-3: #F1F3F5;
+  --color-superficie-hover: #EDEFF2;
+  --color-hover: rgba(99, 102, 241, 0.06);
+  --color-borde: rgba(15, 23, 42, 0.12);
+  --color-borde-hover: rgba(15, 23, 42, 0.22);
 
-  /* ===== TEXTO ===== */
-  --color-texto: #FFFFFF;
-  --color-texto-secundario: #A0A0A0;
-  --color-texto-muted: rgba(248,250,252,0.45);
-  --color-texto-invertido: #000000;
+  /* ===== TEXTO (CLARO) ===== */
+  --color-texto: #0F172A;
+  --color-texto-secundario: #475569;
+  --color-texto-muted: rgba(15, 23, 42, 0.45);
+  --color-texto-invertido: #FFFFFF;
 
-  /* ===== NEON ACCENTS ===== */
-  --color-exito: #00FF88;
-  --color-exito-hover: #00CC6A;
-  --color-exito-soft: rgba(0, 255, 136, 0.08);
-  --color-exito-border: rgba(0, 255, 136, 0.25);
-  --color-exito-glow: 0 0 12px rgba(0, 255, 136, 0.4), 0 0 24px rgba(0, 255, 136, 0.15);
+  /* ===== PRIMARIO (índigo) ===== */
+  --color-primario: #6366F1;
+  --color-primario-hover: #4F46E5;
+  --color-primario-light: rgba(99, 102, 241, 0.12);
+  --color-primario-claro: rgba(99, 102, 241, 0.12);
+  --color-primario-rgb: 99, 102, 241;
 
-  --color-advertencia: #FFD700;
-  --color-advertencia-hover: #FFC200;
-  --color-advertencia-soft: rgba(255, 215, 0, 0.08);
-  --color-advertencia-border: rgba(255, 215, 0, 0.25);
-  --color-advertencia-glow: 0 0 12px rgba(255, 215, 0, 0.4), 0 0 24px rgba(255, 215, 0, 0.15);
+  /* ===== SECUNDARIO (slate) ===== */
+  --color-secundario: #64748B;
+  --color-secundario-hover: #475569;
+  --color-secundario-light: rgba(100, 116, 139, 0.12);
 
-  --color-error: #FF3B3B;
-  --color-error-hover: #CC2020;
-  --color-error-soft: rgba(255, 59, 59, 0.08);
-  --color-error-border: rgba(255, 59, 59, 0.25);
-  --color-error-glow: 0 0 12px rgba(255, 59, 59, 0.4), 0 0 24px rgba(255, 59, 59, 0.15);
+  /* ===== INFO (azul) ===== */
+  --color-info: #0284C7;
+  --color-info-hover: #0369A1;
+  --color-info-light: rgba(2, 132, 199, 0.12);
+
+  /* ===== EXITO ===== */
+  --color-exito: #16A34A;
+  --color-exito-hover: #15803D;
+  --color-exito-soft: rgba(22, 163, 74, 0.10);
+  --color-exito-border: rgba(22, 163, 74, 0.30);
+  --color-exito-glow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+
+  /* ===== ADVERTENCIA ===== */
+  --color-advertencia: #D97706;
+  --color-advertencia-hover: #B45309;
+  --color-advertencia-light: rgba(217, 119, 6, 0.14);
+  --color-advertencia-soft: rgba(217, 119, 6, 0.10);
+  --color-advertencia-border: rgba(217, 119, 6, 0.30);
+  --color-advertencia-glow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+
+  /* ===== ERROR ===== */
+  --color-error: #DC2626;
+  --color-error-hover: #B91C1C;
+  --color-error-light: rgba(220, 38, 38, 0.12);
+  --color-error-soft: rgba(220, 38, 38, 0.10);
+  --color-error-border: rgba(220, 38, 38, 0.30);
+  --color-error-glow: 0 0 0 3px rgba(220, 38, 38, 0.15);
 
   /* Alias semánticos */
   --color-pagado: var(--color-exito);
@@ -43,22 +69,22 @@
   --color-vencido-hover: var(--color-error-hover);
   --color-vencido-soft: var(--color-error-soft);
 
-  /* ===== SERVICIOS NEON ===== */
-  --color-luz: #FFD700;
-  --color-luz-soft: rgba(255, 215, 0, 0.08);
-  --color-luz-glow: 0 0 10px rgba(255, 215, 0, 0.35);
+  /* ===== SERVICIOS ===== */
+  --color-luz: #D97706;
+  --color-luz-soft: rgba(217, 119, 6, 0.10);
+  --color-luz-glow: none;
 
-  --color-agua: #00CFFF;
-  --color-agua-soft: rgba(0, 207, 255, 0.08);
-  --color-agua-glow: 0 0 10px rgba(0, 207, 255, 0.35);
+  --color-agua: #0891B2;
+  --color-agua-soft: rgba(8, 145, 178, 0.10);
+  --color-agua-glow: none;
 
-  --color-gas: #FF5555;
-  --color-gas-soft: rgba(255, 85, 85, 0.08);
-  --color-gas-glow: 0 0 10px rgba(255, 85, 85, 0.35);
+  --color-gas: #DC2626;
+  --color-gas-soft: rgba(220, 38, 38, 0.10);
+  --color-gas-glow: none;
 
-  --color-internet: #BF7FFF;
-  --color-internet-soft: rgba(191, 127, 255, 0.08);
-  --color-internet-glow: 0 0 10px rgba(191, 127, 255, 0.35);
+  --color-internet: #7C3AED;
+  --color-internet-soft: rgba(124, 58, 237, 0.10);
+  --color-internet-glow: none;
 
   /* ===== TIPOGRAFÍA ===== */
   --fuente-principal: 'Fira Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -100,18 +126,18 @@
   --radio-2xl: 1.5rem;
   --radio-full: 9999px;
 
-  /* ===== SOMBRAS ===== */
-  --sombra-sm: 0 1px 4px rgba(0, 0, 0, 0.6);
-  --sombra-base: 0 2px 8px rgba(0, 0, 0, 0.7);
-  --sombra-md: 0 4px 16px rgba(0, 0, 0, 0.7);
-  --sombra-lg: 0 8px 32px rgba(0, 0, 0, 0.8);
-  --sombra-xl: 0 16px 48px rgba(0, 0, 0, 0.9);
+  /* ===== SOMBRAS (CLARO) ===== */
+  --sombra-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --sombra-base: 0 1px 3px rgba(15, 23, 42, 0.10), 0 1px 2px rgba(15, 23, 42, 0.06);
+  --sombra-md: 0 4px 12px rgba(15, 23, 42, 0.10);
+  --sombra-lg: 0 10px 24px rgba(15, 23, 42, 0.12);
+  --sombra-xl: 0 20px 40px rgba(15, 23, 42, 0.16);
 
-  /* ===== GLASS ===== */
-  --glass-bg: rgba(13, 13, 13, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.07);
+  /* ===== GLASS (CLARO) ===== */
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(15, 23, 42, 0.08);
   --glass-backdrop: blur(20px);
-  --glass-background: rgba(13, 13, 13, 0.85);
+  --glass-background: rgba(255, 255, 255, 0.75);
 
   /* ===== TRANSICIONES ===== */
   --transicion-rapida: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -146,8 +172,105 @@
   --radius-2xl: 1.5rem;
   --radius-full: 9999px;
 
+  --shadow-elevated: 0 4px 12px rgba(15, 23, 42, 0.10);
+  --shadow-floating: 0 20px 40px rgba(15, 23, 42, 0.16);
+
+  color-scheme: light;
+}
+
+/* ============================================================
+   TEMA OSCURO - OLED + Neón
+   ============================================================ */
+.tema-oscuro {
+  /* ===== FONDOS OLED ===== */
+  --color-fondo: #000000;
+  --color-superficie: #0D0D0D;
+  --color-superficie-2: #141414;
+  --color-superficie-3: #1A1A1A;
+  --color-superficie-hover: #1F1F1F;
+  --color-hover: rgba(255, 255, 255, 0.06);
+  --color-borde: rgba(255, 255, 255, 0.07);
+  --color-borde-hover: rgba(255, 255, 255, 0.15);
+
+  /* ===== TEXTO ===== */
+  --color-texto: #FFFFFF;
+  --color-texto-secundario: #A0A0A0;
+  --color-texto-muted: rgba(248, 250, 252, 0.45);
+  --color-texto-invertido: #000000;
+
+  /* ===== PRIMARIO ===== */
+  --color-primario: #818CF8;
+  --color-primario-hover: #A5B4FC;
+  --color-primario-light: rgba(129, 140, 248, 0.18);
+  --color-primario-claro: rgba(129, 140, 248, 0.18);
+  --color-primario-rgb: 129, 140, 248;
+
+  /* ===== SECUNDARIO ===== */
+  --color-secundario: #94A3B8;
+  --color-secundario-hover: #CBD5E1;
+  --color-secundario-light: rgba(148, 163, 184, 0.18);
+
+  /* ===== INFO ===== */
+  --color-info: #38BDF8;
+  --color-info-hover: #7DD3FC;
+  --color-info-light: rgba(56, 189, 248, 0.18);
+
+  /* ===== EXITO (neón) ===== */
+  --color-exito: #00FF88;
+  --color-exito-hover: #00CC6A;
+  --color-exito-soft: rgba(0, 255, 136, 0.08);
+  --color-exito-border: rgba(0, 255, 136, 0.25);
+  --color-exito-glow: 0 0 12px rgba(0, 255, 136, 0.4), 0 0 24px rgba(0, 255, 136, 0.15);
+
+  /* ===== ADVERTENCIA (neón) ===== */
+  --color-advertencia: #FFD700;
+  --color-advertencia-hover: #FFC200;
+  --color-advertencia-light: rgba(255, 215, 0, 0.16);
+  --color-advertencia-soft: rgba(255, 215, 0, 0.08);
+  --color-advertencia-border: rgba(255, 215, 0, 0.25);
+  --color-advertencia-glow: 0 0 12px rgba(255, 215, 0, 0.4), 0 0 24px rgba(255, 215, 0, 0.15);
+
+  /* ===== ERROR (neón) ===== */
+  --color-error: #FF3B3B;
+  --color-error-hover: #CC2020;
+  --color-error-light: rgba(255, 59, 59, 0.16);
+  --color-error-soft: rgba(255, 59, 59, 0.08);
+  --color-error-border: rgba(255, 59, 59, 0.25);
+  --color-error-glow: 0 0 12px rgba(255, 59, 59, 0.4), 0 0 24px rgba(255, 59, 59, 0.15);
+
+  /* ===== SERVICIOS (neón) ===== */
+  --color-luz: #FFD700;
+  --color-luz-soft: rgba(255, 215, 0, 0.08);
+  --color-luz-glow: 0 0 10px rgba(255, 215, 0, 0.35);
+
+  --color-agua: #00CFFF;
+  --color-agua-soft: rgba(0, 207, 255, 0.08);
+  --color-agua-glow: 0 0 10px rgba(0, 207, 255, 0.35);
+
+  --color-gas: #FF5555;
+  --color-gas-soft: rgba(255, 85, 85, 0.08);
+  --color-gas-glow: 0 0 10px rgba(255, 85, 85, 0.35);
+
+  --color-internet: #BF7FFF;
+  --color-internet-soft: rgba(191, 127, 255, 0.08);
+  --color-internet-glow: 0 0 10px rgba(191, 127, 255, 0.35);
+
+  /* ===== SOMBRAS OSCURAS ===== */
+  --sombra-sm: 0 1px 4px rgba(0, 0, 0, 0.6);
+  --sombra-base: 0 2px 8px rgba(0, 0, 0, 0.7);
+  --sombra-md: 0 4px 16px rgba(0, 0, 0, 0.7);
+  --sombra-lg: 0 8px 32px rgba(0, 0, 0, 0.8);
+  --sombra-xl: 0 16px 48px rgba(0, 0, 0, 0.9);
+
+  /* ===== GLASS OSCURO ===== */
+  --glass-bg: rgba(13, 13, 13, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glass-background: rgba(13, 13, 13, 0.85);
+
   --shadow-elevated: 0 4px 20px rgba(0, 0, 0, 0.7);
   --shadow-floating: 0 16px 48px rgba(0, 0, 0, 0.9);
+
+  color-scheme: dark;
 }
 
 @media (prefers-reduced-motion: reduce) {

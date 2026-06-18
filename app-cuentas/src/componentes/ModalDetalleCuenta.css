@@ -43,8 +43,8 @@
 
 /* Panel */
 .modal-cuenta__panel {
-  background: #0D0D0D;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
   border-radius: 1.25rem 1.25rem 0 0;
   width: 100%;
   max-width: 520px;
@@ -132,7 +132,7 @@
 .modal-cuenta__titulo {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-texto);
   margin: 0;
   line-height: 1.2;
 }
@@ -173,7 +173,7 @@
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 0.625rem;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--color-borde);
   background: rgba(255, 255, 255, 0.04);
   color: rgba(248, 250, 252, 0.5);
   display: flex;
@@ -248,7 +248,7 @@
   flex-direction: column;
   gap: 0.125rem;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-borde);
   border-radius: 0.875rem;
   overflow: hidden;
 }

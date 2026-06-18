@@ -51,3 +51,28 @@ export interface ResumenDesglose {
   gastosPorTipo: Record<TipoGasto, number>;
   porcentajeGastado: number;
 }
+
+/** Cuenta de servicio reflejada (solo lectura) dentro del desglose de sueldo */
+export interface CuentaReflejada {
+  id: string;
+  servicio: string;
+  monto: number;
+  pagada: boolean;
+}
+
+/**
+ * Resumen consolidado que cruza el sueldo con las cuentas de servicios
+ * y el carrito del supermercado del mismo período.
+ */
+export interface ResumenConsolidado extends ResumenDesglose {
+  /** Cuentas (luz, agua, gas, internet) del mes reflejadas como descuento */
+  cuentasReflejadas: CuentaReflejada[];
+  totalCuentas: number;
+  /** Total del carrito de supermercado reflejado como una sola línea */
+  totalSupermercado: number;
+  /** Total combinado: gastos manuales + bebé + generales + cuentas + super */
+  totalDescuentosConsolidado: number;
+  /** Saldo final disponible para gestionar libremente */
+  saldoDisponible: number;
+  porcentajeGastadoConsolidado: number;
+}

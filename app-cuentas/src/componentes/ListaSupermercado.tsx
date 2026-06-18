@@ -207,6 +207,20 @@ const ListaSupermercado: React.FC = () => {
     }
   };
 
+  // Permite escribir la cantidad directamente
+  const fijarCantidad = async (item: ItemSuper, valor: string) => {
+    const limpio = valor.replace(/\D/g, '');
+    const nuevaCantidad = Math.max(1, parseInt(limpio || '1', 10));
+    // Actualización optimista inmediata
+    setItems(prev => prev.map(i => i.id === item.id ? { ...i, cantidad: nuevaCantidad } : i));
+    try {
+      await supermercadoAPI.actualizarItem(item.id, { cantidad: nuevaCantidad });
+      actualizarResumenLocal();
+    } catch (error) {
+      console.error('Error al fijar cantidad:', error);
+    }
+  };
+
   const eliminarItem = async (itemId: string) => {
     try {
       await supermercadoAPI.eliminarItem(itemId);
@@ -507,10 +521,14 @@ const ListaSupermercado: React.FC = () => {
         <div className="lista-super__items">
           {Object.entries(itemsPorCategoria).map(([categoria, itemsCat]) => {
             const catInfo = CATEGORIAS_SUPER.find(c => c.id === categoria);
+            const totalCat = itemsCat.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
             return (
               <div key={categoria} className="lista-super__grupo">
                 <h4 className="lista-super__grupo-titulo">
-                  {catInfo?.label || categoria}
+                  <span>{catInfo?.label || categoria}</span>
+                  {totalCat > 0 && (
+                    <span className="lista-super__grupo-total">{formatearPesosChilenos(totalCat)}</span>
+                  )}
                 </h4>
                 {itemsCat.map(item => (
                   <div
@@ -552,7 +570,14 @@ const ListaSupermercado: React.FC = () => {
                       >
                         <IconoMenos />
                       </button>
-                      <span className="lista-super__cantidad-num">{item.cantidad}</span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        className="lista-super__cantidad-input"
+                        value={item.cantidad}
+                        onChange={e => fijarCantidad(item, e.target.value)}
+                        aria-label={`Cantidad de ${item.nombre}`}
+                      />
                       <button
                         className="lista-super__btn-cantidad"
                         onClick={() => cambiarCantidad(item, 1)}
