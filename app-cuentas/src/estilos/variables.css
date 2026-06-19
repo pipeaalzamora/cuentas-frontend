@@ -20,6 +20,7 @@
   --color-texto-secundario: #475569;
   --color-texto-muted: rgba(15, 23, 42, 0.45);
   --color-texto-invertido: #FFFFFF;
+  --color-texto-sutil: rgba(15, 23, 42, 0.32);
 
   /* ===== PRIMARIO (índigo) ===== */
   --color-primario: #6366F1;
@@ -44,6 +45,11 @@
   --color-exito-soft: rgba(22, 163, 74, 0.10);
   --color-exito-border: rgba(22, 163, 74, 0.30);
   --color-exito-glow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+  --color-acento: var(--color-exito);
+  --color-acento-hover: var(--color-exito-hover);
+  --color-acento-soft: var(--color-exito-soft);
+  --color-acento-border: var(--color-exito-border);
+  --color-acento-glow: var(--color-exito-glow);
 
   /* ===== ADVERTENCIA ===== */
   --color-advertencia: #D97706;
@@ -132,6 +138,15 @@
   --sombra-md: 0 4px 12px rgba(15, 23, 42, 0.10);
   --sombra-lg: 0 10px 24px rgba(15, 23, 42, 0.12);
   --sombra-xl: 0 20px 40px rgba(15, 23, 42, 0.16);
+  --sombra-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 10px 24px rgba(15, 23, 42, 0.08);
+  --sombra-card-hover: 0 16px 36px rgba(15, 23, 42, 0.14);
+
+  /* ===== SUPERFICIES COMPUESTAS (CLARO) ===== */
+  --color-panel-soft: rgba(15, 23, 42, 0.025);
+  --color-panel-hover: rgba(99, 102, 241, 0.06);
+  --color-table-header: #F8FAFC;
+  --color-table-row-hover: rgba(99, 102, 241, 0.055);
+  --color-shimmer: rgba(99, 102, 241, 0.08);
 
   /* ===== GLASS (CLARO) ===== */
   --glass-bg: rgba(255, 255, 255, 0.75);
@@ -197,6 +212,7 @@
   --color-texto-secundario: #A0A0A0;
   --color-texto-muted: rgba(248, 250, 252, 0.45);
   --color-texto-invertido: #000000;
+  --color-texto-sutil: rgba(248, 250, 252, 0.25);
 
   /* ===== PRIMARIO ===== */
   --color-primario: #818CF8;
@@ -221,6 +237,11 @@
   --color-exito-soft: rgba(0, 255, 136, 0.08);
   --color-exito-border: rgba(0, 255, 136, 0.25);
   --color-exito-glow: 0 0 12px rgba(0, 255, 136, 0.4), 0 0 24px rgba(0, 255, 136, 0.15);
+  --color-acento: var(--color-exito);
+  --color-acento-hover: var(--color-exito-hover);
+  --color-acento-soft: var(--color-exito-soft);
+  --color-acento-border: var(--color-exito-border);
+  --color-acento-glow: var(--color-exito-glow);
 
   /* ===== ADVERTENCIA (neón) ===== */
   --color-advertencia: #FFD700;
@@ -261,6 +282,15 @@
   --sombra-md: 0 4px 16px rgba(0, 0, 0, 0.7);
   --sombra-lg: 0 8px 32px rgba(0, 0, 0, 0.8);
   --sombra-xl: 0 16px 48px rgba(0, 0, 0, 0.9);
+  --sombra-card: 0 2px 12px rgba(0, 0, 0, 0.6);
+  --sombra-card-hover: 0 10px 34px rgba(0, 0, 0, 0.82);
+
+  /* ===== SUPERFICIES COMPUESTAS OSCURAS ===== */
+  --color-panel-soft: rgba(255, 255, 255, 0.03);
+  --color-panel-hover: rgba(255, 255, 255, 0.06);
+  --color-table-header: #080808;
+  --color-table-row-hover: rgba(255, 255, 255, 0.03);
+  --color-shimmer: rgba(255, 255, 255, 0.04);
 
   /* ===== GLASS OSCURO ===== */
   --glass-bg: rgba(13, 13, 13, 0.85);

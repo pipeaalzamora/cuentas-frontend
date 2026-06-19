@@ -13,6 +13,7 @@
   border: 1px solid var(--color-borde);
   border-radius: 12px;
   padding: 1rem 1.25rem;
+  box-shadow: var(--sombra-card);
   animation: slideUpFade 0.4s ease-out 0.05s both;
 }
 
@@ -32,7 +33,7 @@
 .lista-cuentas__filtro label {
   font-size: 0.6875rem;
   font-weight: 500;
-  color: rgba(248,250,252,0.45);
+  color: var(--color-texto-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -68,7 +69,7 @@
 
 .lista-cuentas__contador {
   font-size: 0.8125rem;
-  color: rgba(248,250,252,0.45);
+  color: var(--color-texto-muted);
   font-family: 'Fira Code', monospace;
 }
 
@@ -78,6 +79,7 @@
   border: 1px solid var(--color-borde);
   border-radius: 12px;
   overflow: hidden;
+  box-shadow: var(--sombra-card);
   animation: slideUpFade 0.4s ease-out 0.10s both;
 }
 
@@ -93,23 +95,23 @@
 }
 
 .lista-cuentas__tabla th {
-  background: #080808;
+  background: var(--color-table-header);
   padding: 0.75rem 1rem;
   text-align: left;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: rgba(248,250,252,0.45);
+  color: var(--color-texto-muted);
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid var(--color-borde);
   white-space: nowrap;
 }
 
 .lista-cuentas__tabla td {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--color-borde);
   vertical-align: middle;
-  color: #E0E0E0;
+  color: var(--color-texto);
 }
 
 .lista-cuentas__fila {
@@ -122,7 +124,7 @@
 }
 
 .lista-cuentas__fila--clickeable:focus-visible {
-  outline: 2px solid #00FF88;
+  outline: 2px solid var(--color-acento);
   outline-offset: -2px;
 }
 
@@ -135,7 +137,7 @@
 .lista-cuentas__fila:nth-child(n+6) { animation-delay: 0.20s; }
 
 .lista-cuentas__fila:hover {
-  background: rgba(255,255,255,0.03);
+  background: var(--color-table-row-hover);
 }
 
 .lista-cuentas__fila:last-child td { border-bottom: none; }
@@ -148,7 +150,7 @@
   font: inherit;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: rgba(248,250,252,0.45);
+  color: var(--color-texto-muted);
   text-transform: uppercase;
   letter-spacing: 0.07em;
   cursor: pointer;
@@ -201,7 +203,7 @@
   transition: color 150ms ease;
 }
 
-.lista-cuentas__fila:hover .lista-cuentas__monto { color: #00FF88; }
+.lista-cuentas__fila:hover .lista-cuentas__monto { color: var(--color-acento); }
 
 /* Estado */
 .lista-cuentas__estado {
@@ -217,9 +219,9 @@
 }
 
 .lista-cuentas__estado--pagada {
-  background: rgba(0, 255, 136, 0.08);
-  color: #00FF88;
-  border: 1px solid rgba(0, 255, 136, 0.2);
+  background: var(--color-exito-soft);
+  color: var(--color-exito);
+  border: 1px solid var(--color-exito-border);
 }
 
 .lista-cuentas__estado--pagada:hover,
@@ -228,15 +230,15 @@
 }
 
 .lista-cuentas__estado--pendiente {
-  background: rgba(255, 215, 0, 0.08);
-  color: #FFD700;
-  border: 1px solid rgba(255, 215, 0, 0.2);
+  background: var(--color-advertencia-soft);
+  color: var(--color-advertencia);
+  border: 1px solid var(--color-advertencia-border);
 }
 
 .lista-cuentas__estado--vencida {
-  background: rgba(255, 59, 59, 0.08);
-  color: #FF3B3B;
-  border: 1px solid rgba(255, 59, 59, 0.2);
+  background: var(--color-error-soft);
+  color: var(--color-error);
+  border: 1px solid var(--color-error-border);
 }
 
 .lista-cuentas__fila:hover .lista-cuentas__estado--vencida {
@@ -244,7 +246,7 @@
 }
 
 .lista-cuentas__fecha-creacion {
-  color: rgba(248,250,252,0.45);
+  color: var(--color-texto-muted);
   font-size: 0.8125rem;
   font-family: 'Fira Code', monospace;
 }
@@ -259,7 +261,7 @@
 .lista-cuentas__vacia {
   text-align: center;
   padding: 3rem;
-  color: rgba(248,250,252,0.45);
+  color: var(--color-texto-muted);
 }
 
 .lista-cuentas__vacia p { margin: 0; font-size: 0.9375rem; }
@@ -307,11 +309,11 @@
 @media (prefers-reduced-motion: reduce) {
   .lista-cuentas, .lista-cuentas__filtros,
   .lista-cuentas__tabla-container, .lista-cuentas__fila { animation: none; }
-  .lista-cuentas__fila:hover { background: rgba(255,255,255,0.03); }
+  .lista-cuentas__fila:hover { background: var(--color-table-row-hover); }
 }
 
 .lista-cuentas__header-boton:focus-visible {
-  outline: 2px solid #00FF88;
+  outline: 2px solid var(--color-acento);
   outline-offset: 2px;
   border-radius: 4px;
 }

@@ -158,13 +158,13 @@
 
 .modal-cuenta__estado--pagada {
   background: rgba(0, 255, 136, 0.08);
-  color: #00FF88;
+  color: var(--color-acento);
   border: 1px solid rgba(0, 255, 136, 0.2);
 }
 
 .modal-cuenta__estado--pendiente {
   background: rgba(255, 215, 0, 0.08);
-  color: #FFD700;
+  color: var(--color-advertencia);
   border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
@@ -175,7 +175,7 @@
   border-radius: 0.625rem;
   border: 1px solid var(--color-borde);
   background: rgba(255, 255, 255, 0.04);
-  color: rgba(248, 250, 252, 0.5);
+  color: var(--color-texto-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -211,7 +211,7 @@
 .modal-cuenta__monto-label {
   font-size: 0.6875rem;
   font-weight: 500;
-  color: rgba(248, 250, 252, 0.4);
+  color: var(--color-texto-muted);
   text-transform: uppercase;
   letter-spacing: 0.07em;
 }
@@ -236,7 +236,7 @@
 .modal-cuenta__seccion-titulo {
   font-size: 0.6875rem;
   font-weight: 600;
-  color: rgba(248, 250, 252, 0.35);
+  color: var(--color-texto-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin: 0 0 0.625rem;
@@ -280,7 +280,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(248, 250, 252, 0.3);
+  color: var(--color-texto-muted);
   flex-shrink: 0;
 }
 
@@ -300,14 +300,14 @@
 
 .modal-cuenta__fila-etiqueta {
   font-size: 0.8125rem;
-  color: rgba(248, 250, 252, 0.45);
+  color: var(--color-texto-muted);
   white-space: nowrap;
 }
 
 .modal-cuenta__fila-valor {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #E0E0E0;
+  color: var(--color-texto);
   text-align: right;
   font-family: 'Fira Code', monospace;
 }
@@ -329,7 +329,7 @@
   border-radius: 0.75rem;
   border: 1px solid rgba(0, 255, 136, 0.25);
   background: rgba(0, 255, 136, 0.06);
-  color: #00FF88;
+  color: var(--color-acento);
   font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;

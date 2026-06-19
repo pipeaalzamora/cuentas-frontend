@@ -37,21 +37,21 @@
   background: none;
   border: none;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-bounce);
   border-radius: 10px;
   min-width: 56px;
-  color: rgba(248, 250, 252, 0.35);
+  color: var(--color-texto-muted);
   position: relative;
 }
 
 .bottom-navigation-item:hover {
-  color: rgba(248, 250, 252, 0.7);
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-texto);
+  background: var(--color-hover);
   transform: translateY(-2px);
 }
 
 .bottom-navigation-item.activo {
-  color: #00FF88;
+  color: var(--color-acento);
 }
 
 .bottom-navigation-item.activo::before {
@@ -62,7 +62,7 @@
   transform: translateX(-50%);
   width: 24px;
   height: 2px;
-  background: #00FF88;
+  background: var(--color-acento);
   border-radius: 0 0 4px 4px;
   box-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
   animation: indicatorIn 0.25s ease-out;
@@ -104,7 +104,7 @@
 }
 
 .bottom-navigation-item:focus-visible {
-  outline: 2px solid #00FF88;
+  outline: 2px solid var(--color-acento);
   outline-offset: 2px;
 }
 
