@@ -3,6 +3,7 @@ import { useCuentas } from '../contextos/CuentasContext';
 import { servicioCalculosEstadisticas } from '../servicios/calculosEstadisticas';
 import { TarjetaModerna } from './base/TarjetaModerna';
 import WidgetIndicadores from './WidgetIndicadores';
+import RecordatoriosVencimiento from './RecordatoriosVencimiento';
 import { GraficoEvolucionMensual, GraficoDistribucionServicios } from './graficos';
 import { formatearPesosChilenos } from '../utilidades/formatoChileno';
 import { obtenerEstadisticasEstados } from '../utilidades/estadosCuentas';
@@ -127,6 +128,9 @@ export const DashboardModerno: React.FC<DashboardModernoProps> = ({ onNavegar: _
 
       {/* Indicadores económicos */}
       <WidgetIndicadores />
+
+      {/* Recordatorios de cuentas por vencer */}
+      <RecordatoriosVencimiento dias={7} />
 
       {/* Stats */}
       <div className="dashboard-moderno__resumen">

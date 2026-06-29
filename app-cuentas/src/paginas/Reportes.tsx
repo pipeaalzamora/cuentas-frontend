@@ -1,5 +1,5 @@
 import React from 'react';
-import { GeneradorReportes } from '../componentes';
+import { GeneradorReportes, PanelNotificaciones } from '../componentes';
 
 export const Reportes: React.FC = () => {
   return (
@@ -8,6 +8,9 @@ export const Reportes: React.FC = () => {
         <h1>Generación de Reportes</h1>
       </div>
       <GeneradorReportes />
+      <div style={{ marginTop: '2rem' }}>
+        <PanelNotificaciones />
+      </div>
     </div>
   );
 };

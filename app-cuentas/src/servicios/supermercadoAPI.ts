@@ -58,4 +58,16 @@ export const supermercadoAPI = {
     const response = await api.delete('/supermercado/items');
     return response.data;
   },
+
+  // Finalizar compra: archiva el carrito y lo vacía
+  finalizarCompra: async () => {
+    const response = await api.post('/supermercado/finalizar');
+    return response.data;
+  },
+
+  // Obtener historial de compras archivadas
+  obtenerHistorial: async () => {
+    const response = await api.get('/supermercado/historial');
+    return response.data;
+  },
 };

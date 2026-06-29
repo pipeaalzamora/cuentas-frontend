@@ -5,6 +5,7 @@ import { desgloseSueldoAPI } from '../servicios/desgloseSueldoAPI';
 import { servicioGeneradorPDF } from '../servicios/generadorPDF';
 import { Boton, Input, Tarjeta, Modal } from './index';
 import { usePeriodo } from '../contextos/PeriodoContext';
+import { useUF } from '../utilidades/useUF';
 import '../estilos/botones-modernos.css';
 import './DesglosadorSueldo.css';
 
@@ -36,6 +37,7 @@ const limpiarNumero = (valor: string): string => {
 
 const DesglosadorSueldo: React.FC = () => {
   const { mes: mesGlobal, año: añoGlobal, cambiarPeriodo } = usePeriodo();
+  const { formatearEnUF, valorUF } = useUF();
   const [desgloseActual, setDesgloseActual] = useState<DesgloseSueldo | null>(null);
   const [todosDesgloses, setTodosDesgloses] = useState<DesgloseSueldo[]>([]);
   const [resumen, setResumen] = useState<ResumenConsolidado | null>(null);
@@ -445,6 +447,9 @@ const DesglosadorSueldo: React.FC = () => {
             <span className={`valor ${(resumen?.saldoDisponible || 0) >= 0 ? 'positivo' : 'negativo'}`}>
               {formatearPesosChilenos(resumen?.saldoDisponible || 0)}
             </span>
+            {valorUF && (resumen?.saldoDisponible || 0) !== 0 && (
+              <span className="valor-uf">{formatearEnUF(resumen?.saldoDisponible || 0)}</span>
+            )}
           </div>
           <div className="resumen-item">
             <span className="label">Gastado:</span>

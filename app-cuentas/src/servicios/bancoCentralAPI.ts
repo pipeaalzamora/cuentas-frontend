@@ -58,6 +58,16 @@ export const bancoCentralAPI = {
     }
   },
 
+  /** Obtiene el último valor de la UF (Banco Central) */
+  obtenerUF: async (): Promise<{ configurado: boolean; valor: number; fecha: string } | null> => {
+    try {
+      const response = await api.get('/indicadores/uf');
+      return response.data;
+    } catch {
+      return null;
+    }
+  },
+
   /** Consulta genérica de una serie del Banco Central por código */
   obtenerSerie: async (codigo: string, desde?: string, hasta?: string): Promise<ObservacionIndicador[]> => {
     try {

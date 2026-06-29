@@ -19,6 +19,9 @@ export { DashboardModerno } from './DashboardModerno';
 export { GeneradorReportes } from './GeneradorReportes';
 export { default as DesglosadorSueldo } from './DesglosadorSueldo';
 export { default as WidgetIndicadores } from './WidgetIndicadores';
+export { default as PanelNotificaciones } from './PanelNotificaciones';
+export { default as RecordatoriosVencimiento } from './RecordatoriosVencimiento';
+export { default as HistorialCompras } from './HistorialCompras';
 
 // Exportaciones de componentes de gráficos
 export * from './graficos';

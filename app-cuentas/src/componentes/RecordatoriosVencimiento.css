@@ -1,0 +1,129 @@
+.recordatorios {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.recordatorios__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.recordatorios__header h3 {
+  margin: 0;
+  font-size: var(--texto-base);
+  color: var(--color-texto);
+}
+
+.recordatorios__icono {
+  font-size: 1.1rem;
+}
+
+.recordatorios__badge {
+  background: var(--color-advertencia);
+  color: var(--color-texto-invertido);
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-bold);
+  border-radius: var(--radio-full);
+  min-width: 1.4rem;
+  height: 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.4rem;
+}
+
+.recordatorios__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recordatorios__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--color-superficie-2);
+  border: 1px solid var(--color-borde);
+  border-left: 3px solid var(--color-advertencia);
+  border-radius: var(--radio-md);
+}
+
+.recordatorios__item.hoy {
+  border-left-color: var(--color-advertencia);
+}
+
+.recordatorios__item.vencida {
+  border-left-color: var(--color-error);
+}
+
+.recordatorios__item-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.recordatorios__tag {
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-semibold);
+  background: var(--color-superficie-3);
+  color: var(--color-texto);
+}
+
+.recordatorios__tag.servicio-luz { background: var(--color-luz-soft); color: var(--color-luz); }
+.recordatorios__tag.servicio-agua { background: var(--color-agua-soft); color: var(--color-agua); }
+.recordatorios__tag.servicio-gas { background: var(--color-gas-soft); color: var(--color-gas); }
+.recordatorios__tag.servicio-internet { background: var(--color-internet-soft); color: var(--color-internet); }
+
+.recordatorios__cuando {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-secundario);
+}
+
+.recordatorios__item.vencida .recordatorios__cuando {
+  color: var(--color-error);
+  font-weight: var(--peso-medium);
+}
+
+.recordatorios__monto {
+  font-family: var(--fuente-mono);
+  font-weight: var(--peso-bold);
+  color: var(--color-texto);
+}
+
+.recordatorios__item-derecha {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.recordatorios__btn-pagar {
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radio-sm);
+  border: 1px solid var(--color-exito-border);
+  background: var(--color-exito-soft);
+  color: var(--color-exito);
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-semibold);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transicion-rapida);
+}
+
+.recordatorios__btn-pagar:hover:not(:disabled) {
+  background: var(--color-exito);
+  color: var(--color-texto-invertido);
+}
+
+.recordatorios__btn-pagar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

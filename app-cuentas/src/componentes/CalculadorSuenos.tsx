@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { servicioDesglosadorSueldo } from '../servicios/desglosadorSueldo';
+import { desgloseSueldoAPI } from '../servicios/desgloseSueldoAPI';
 import { formatearPesosChilenos } from '../utilidades/formatoChileno';
 import type { DesgloseSueldo } from '../tipos/desglosador';
 import Input from './base/Input';
@@ -83,9 +84,23 @@ const CalculadorSuenos: React.FC = () => {
     return servicioDesglosadorSueldo.calcularResumen(desgloseActual);
   }, [desgloseActual]);
 
-  const saldoRestante = resumenSueldo?.saldoRestante ?? 0;
+  // Saldo disponible consolidado (incluye cuentas + supermercado), traído del backend.
+  const [saldoConsolidado, setSaldoConsolidado] = useState<number | null>(null);
+  useEffect(() => {
+    if (!desgloseActual?.id) {
+      setSaldoConsolidado(null);
+      return;
+    }
+    desgloseSueldoAPI
+      .obtenerResumenConsolidado(desgloseActual.id)
+      .then(d => setSaldoConsolidado(d.saldoDisponible ?? null))
+      .catch(() => setSaldoConsolidado(null));
+  }, [desgloseActual]);
+
+  // Usa el saldo consolidado si está disponible; si no, el saldo simple como respaldo.
+  const saldoRestante = saldoConsolidado ?? resumenSueldo?.saldoRestante ?? 0;
   const sueldoInicial = resumenSueldo?.sueldoInicial ?? 0;
-  const totalDescuentos = resumenSueldo?.totalDescuentos ?? 0;
+  const totalDescuentos = sueldoInicial - saldoRestante;
 
   // Inputs
   const [nombreSueno, setNombreSueno] = useState('');

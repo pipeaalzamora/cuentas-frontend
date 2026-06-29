@@ -828,3 +828,19 @@
 .lista-super__total strong {
   color: var(--color-texto);
 }
+
+.lista-super__btn-finalizar {
+  padding: 0.6rem 1rem;
+  border-radius: 0.625rem;
+  border: none;
+  background: var(--color-exito, #16a34a);
+  color: var(--color-texto-invertido);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.lista-super__btn-finalizar:hover {
+  opacity: 0.9;
+}

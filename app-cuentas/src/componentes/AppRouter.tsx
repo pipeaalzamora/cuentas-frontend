@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { LayoutModerno } from './LayoutModerno';
 import { ErrorBoundary } from './ErrorBoundary';
 import type { BreadcrumbItem } from './navegacion';
 
-// Importaciones directas para evitar problemas de lazy loading
-import Dashboard from '../paginas/Dashboard';
-import Cuentas from '../paginas/Cuentas';
-import Estadisticas from '../paginas/Estadisticas';
-import Reportes from '../paginas/Reportes';
-import Desglosador from '../paginas/Desglosador';
-import Suenos from '../paginas/Suenos';
-import Supermercado from '../paginas/Supermercado';
-import NotFound from '../paginas/NotFound';
-import TestNavegacion from '../paginas/TestNavegacion';
+// Carga diferida (code splitting) de las páginas.
+// Las páginas pesadas (Reportes -> jsPDF/html2canvas, Estadisticas -> charts)
+// se separan en chunks independientes que solo se descargan al navegar a ellas.
+const Dashboard = lazy(() => import('../paginas/Dashboard'));
+const Cuentas = lazy(() => import('../paginas/Cuentas'));
+const Estadisticas = lazy(() => import('../paginas/Estadisticas'));
+const Reportes = lazy(() => import('../paginas/Reportes'));
+const Desglosador = lazy(() => import('../paginas/Desglosador'));
+const Suenos = lazy(() => import('../paginas/Suenos'));
+const Supermercado = lazy(() => import('../paginas/Supermercado'));
+const NotFound = lazy(() => import('../paginas/NotFound'));
+const TestNavegacion = lazy(() => import('../paginas/TestNavegacion'));
+
+// Fallback simple mientras se descarga el chunk de la página.
+const CargandoPagina: React.FC = () => (
+  <div className="loading-spinner">
+    <div className="spinner" />
+    <p>Cargando...</p>
+  </div>
+);
 
 
 
@@ -85,17 +95,19 @@ const AppContent: React.FC = () => {
       breadcrumbs={generarBreadcrumbs()}
     >
       <ErrorBoundary>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/cuentas" element={<Cuentas />} />
-          <Route path="/estadisticas" element={<Estadisticas />} />
-          <Route path="/reportes" element={<Reportes />} />
-          <Route path="/desglosador" element={<Desglosador />} />
-          <Route path="/suenos" element={<Suenos />} />
-          <Route path="/supermercado" element={<Supermercado />} />
-          <Route path="/test" element={<TestNavegacion />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<CargandoPagina />}>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/cuentas" element={<Cuentas />} />
+            <Route path="/estadisticas" element={<Estadisticas />} />
+            <Route path="/reportes" element={<Reportes />} />
+            <Route path="/desglosador" element={<Desglosador />} />
+            <Route path="/suenos" element={<Suenos />} />
+            <Route path="/supermercado" element={<Supermercado />} />
+            <Route path="/test" element={<TestNavegacion />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </ErrorBoundary>
     </LayoutModerno>
   );

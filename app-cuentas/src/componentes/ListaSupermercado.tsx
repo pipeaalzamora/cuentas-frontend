@@ -3,6 +3,7 @@ import type { ItemSuper, CategoriaSuper, PrecioMemoria, ResumenSuper } from '../
 import { CATEGORIAS_SUPER } from '../tipos/supermercado';
 import { supermercadoAPI } from '../servicios/supermercadoAPI';
 import { formatearPesosChilenos } from '../utilidades/formatoChileno';
+import { sugerirCategoria } from '../utilidades/categorizador';
 import './ListaSupermercado.css';
 
 // --- SVG Icons ---
@@ -75,6 +76,7 @@ const ListaSupermercado: React.FC = () => {
   const [precioInput, setPrecioInput] = useState('');
   const [cantidadInput, setCantidadInput] = useState(1);
   const [categoriaInput, setCategoriaInput] = useState<CategoriaSuper>('otros');
+  const [categoriaManual, setCategoriaManual] = useState(false);
   const [sugerencias, setSugerencias] = useState<PrecioMemoria[]>([]);
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
 
@@ -119,6 +121,13 @@ const ListaSupermercado: React.FC = () => {
   // Autocomplete: filtrar memoria de precios según lo que escribe el usuario
   const manejarCambioNombre = (valor: string) => {
     setNombreInput(valor);
+
+    // Categorización automática: si el usuario no eligió categoría manualmente,
+    // se sugiere una según el nombre del producto.
+    if (!categoriaManual) {
+      setCategoriaInput(sugerirCategoria(valor));
+    }
+
     if (valor.length >= 2) {
       const filtradas = memoriaPrecios.filter(p =>
         p.nombre.toLowerCase().includes(valor.toLowerCase())
@@ -134,6 +143,9 @@ const ListaSupermercado: React.FC = () => {
   const seleccionarSugerencia = (sugerencia: PrecioMemoria) => {
     setNombreInput(sugerencia.nombre);
     setPrecioInput(formatearNumero(sugerencia.precio.toString()));
+    if (!categoriaManual) {
+      setCategoriaInput(sugerirCategoria(sugerencia.nombre));
+    }
     setSugerencias([]);
     setMostrarSugerencias(false);
   };
@@ -171,6 +183,7 @@ const ListaSupermercado: React.FC = () => {
       setPrecioInput('');
       setCantidadInput(1);
       setCategoriaInput('otros');
+      setCategoriaManual(false);
       setSugerencias([]);
       setMostrarSugerencias(false);
       nombreRef.current?.focus();
@@ -238,6 +251,22 @@ const ListaSupermercado: React.FC = () => {
       actualizarResumenLocal();
     } catch (error) {
       console.error('Error al limpiar comprados:', error);
+    }
+  };
+
+  const finalizarCompra = async () => {
+    if (items.length === 0) return;
+    if (!window.confirm('¿Finalizar la compra? El carrito se archivará en el historial y se vaciará.')) {
+      return;
+    }
+    try {
+      await supermercadoAPI.finalizarCompra();
+      setItems([]);
+      actualizarResumenLocal();
+      // Notificar al historial (componente hermano) para que recargue
+      window.dispatchEvent(new CustomEvent('compra-finalizada'));
+    } catch (error) {
+      console.error('Error al finalizar compra:', error);
     }
   };
 
@@ -467,7 +496,10 @@ const ListaSupermercado: React.FC = () => {
           <select
             className="lista-super__select"
             value={categoriaInput}
-            onChange={e => setCategoriaInput(e.target.value as CategoriaSuper)}
+            onChange={e => {
+              setCategoriaInput(e.target.value as CategoriaSuper);
+              setCategoriaManual(true);
+            }}
             aria-label="Categoría del producto"
           >
             {CATEGORIAS_SUPER.map(cat => (
@@ -621,6 +653,12 @@ const ListaSupermercado: React.FC = () => {
                 Limpiar comprados
               </button>
             )}
+            <button
+              className="lista-super__btn-finalizar"
+              onClick={finalizarCompra}
+            >
+              Finalizar compra
+            </button>
           </div>
         </div>
       )}

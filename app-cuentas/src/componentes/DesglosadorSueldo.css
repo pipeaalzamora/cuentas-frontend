@@ -498,3 +498,12 @@
     font-weight: var(--peso-bold);
     color: var(--color-error);
 }
+
+/* Valor en UF bajo el saldo disponible */
+.resumen-item .valor-uf {
+    font-size: var(--texto-sm);
+    font-weight: var(--peso-medium);
+    color: var(--color-texto-secundario);
+    font-family: var(--fuente-mono);
+    margin-top: 0.15rem;
+}
