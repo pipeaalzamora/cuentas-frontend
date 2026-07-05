@@ -594,19 +594,7 @@ export class ServicioGeneradorPDF {
       });
     }
 
-    // Gastos por tipo
-    y += 15;
-    pdf.setFontSize(14);
-    pdf.text('Gastos Propios por Tipo', 20, y);
-    
-    y += 10;
-    pdf.setFontSize(11);
-    Object.entries(resumen.gastosPorTipo).forEach(([tipo, monto]) => {
-      if (monto > 0) {
-        pdf.text(`${tipo.charAt(0).toUpperCase() + tipo.slice(1)}: ${formatearPesosChilenos(monto)}`, 25, y);
-        y += 7;
-      }
-    });
+
     
     // Detalle de gastos propios
     if (desglose.gastos && desglose.gastos.length > 0) {
@@ -626,7 +614,6 @@ export class ServicioGeneradorPDF {
         const fecha = format(gasto.fecha, 'dd/MM/yyyy');
         pdf.text(`${index + 1}. ${gasto.descripcion}`, 20, y);
         pdf.text(formatearPesosChilenos(gasto.monto), 150, y);
-        pdf.text(gasto.tipo, 180, y);
         y += 5;
         pdf.setFontSize(9);
         pdf.text(gasto.categoria ? `${fecha} · ${gasto.categoria}` : fecha, 25, y);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import type { DesgloseSueldo, Gasto, TipoGasto, CategoriaGasto, ResumenConsolidado } from '../tipos/desglosador';
+import type { DesgloseSueldo, Gasto, CategoriaGasto, ResumenConsolidado } from '../tipos/desglosador';
 import { CATEGORIAS_GASTO } from '../tipos/desglosador';
 import { servicioDesglosadorSueldo } from '../servicios/desglosadorSueldo';
 import { desgloseSueldoAPI } from '../servicios/desgloseSueldoAPI';
@@ -53,7 +53,6 @@ const DesglosadorSueldo: React.FC = () => {
   // Form gasto propio
   const [descripcion, setDescripcion] = useState('');
   const [monto, setMonto] = useState('');
-  const [tipo, setTipo] = useState<TipoGasto>('otro');
   const [categoria, setCategoria] = useState<CategoriaGasto>('basicos');
 
   const cargarDesglosePorPeriodo = useCallback((mes: number, año: number, desgloses: DesgloseSueldo[]) => {
@@ -162,7 +161,7 @@ const DesglosadorSueldo: React.FC = () => {
       const nuevoGasto = {
         descripcion,
         monto: montoNum,
-        tipo,
+        tipo: 'otro',
         categoria
       };
 
@@ -170,7 +169,6 @@ const DesglosadorSueldo: React.FC = () => {
       
       setDescripcion('');
       setMonto('');
-      setTipo('otro');
       setCategoria('basicos');
       
       await cargarDesgloses();
@@ -195,7 +193,6 @@ const DesglosadorSueldo: React.FC = () => {
     setGastoEditando(gasto.id);
     setDescripcion(gasto.descripcion);
     setMonto(formatearNumeroConPuntos(gasto.monto.toString()));
-    setTipo(gasto.tipo);
     setCategoria(gasto.categoria || 'basicos');
     setMostrarFormGasto(true);
   };
@@ -213,7 +210,7 @@ const DesglosadorSueldo: React.FC = () => {
       const gastoActualizado = {
         descripcion,
         monto: montoNum,
-        tipo,
+        tipo: 'otro',
         categoria
       };
       await desgloseSueldoAPI.agregarGasto(desgloseActual.id, gastoActualizado);
@@ -222,7 +219,6 @@ const DesglosadorSueldo: React.FC = () => {
       
       setDescripcion('');
       setMonto('');
-      setTipo('otro');
       setCategoria('basicos');
       setGastoEditando(null);
       setMostrarFormGasto(false);
@@ -234,7 +230,6 @@ const DesglosadorSueldo: React.FC = () => {
   const cancelarEdicion = () => {
     setDescripcion('');
     setMonto('');
-    setTipo('otro');
     setCategoria('basicos');
     setGastoEditando(null);
     setMostrarFormGasto(false);
@@ -527,12 +522,9 @@ const DesglosadorSueldo: React.FC = () => {
               {desgloseActual.gastos.map(gasto => (
                 <div key={gasto.id} className="gasto-item">
                   <div className="gasto-info">
-                    <span className={`gasto-tipo tipo-${gasto.tipo}`}>{gasto.tipo}</span>
-                    {gasto.categoria && (
-                      <span className="gasto-categoria">
-                        {CATEGORIAS_GASTO.find(c => c.id === gasto.categoria)?.label || gasto.categoria}
-                      </span>
-                    )}
+                    <span className="gasto-categoria">
+                      {CATEGORIAS_GASTO.find(c => c.id === gasto.categoria)?.label || 'Sin categoría'}
+                    </span>
                     <span className="gasto-descripcion">{gasto.descripcion}</span>
                     <span className="gasto-fecha">
                       {gasto.fecha.toLocaleDateString()}
@@ -598,19 +590,6 @@ const DesglosadorSueldo: React.FC = () => {
                 {CATEGORIAS_GASTO.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.label}</option>
                 ))}
-              </select>
-              <label className="form-gasto__label">Tipo</label>
-              <select 
-                value={tipo} 
-                onChange={(e) => setTipo(e.target.value as TipoGasto)}
-                className="select-tipo"
-              >
-                <option value="pago">Pago</option>
-                <option value="compra">Compra</option>
-                <option value="suscripcion">Suscripción</option>
-                <option value="cuenta">Cuenta</option>
-                <option value="deuda">Deuda</option>
-                <option value="otro">Otro</option>
               </select>
             </div>
           </Modal.Body>
