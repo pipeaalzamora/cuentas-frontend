@@ -44,6 +44,10 @@ export interface CuentaServicio {
   // Notas y observaciones
   notas?: string;
   observaciones?: string;
+
+  // Titularidad: si la cuenta es de un familiar (no propia)
+  esFamiliar?: boolean;
+  titular?: string; // nombre del familiar (ej: "Tío Juan"), vacío si es propia
 }
 
 // Interface para datos básicos del formulario (modo simple)

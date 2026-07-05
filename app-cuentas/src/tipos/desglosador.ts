@@ -2,13 +2,30 @@
 
 export type TipoGasto = 'pago' | 'compra' | 'suscripcion' | 'cuenta' | 'deuda' | 'otro';
 
+export type CategoriaGasto =
+  | 'basicos'
+  | 'arriendo'
+  | 'supermercado'
+  | 'manutencion'
+  | 'prestamos'
+  | 'otro';
+
+export const CATEGORIAS_GASTO: { id: CategoriaGasto; label: string }[] = [
+  { id: 'basicos', label: 'Gastos básicos' },
+  { id: 'arriendo', label: 'Arriendo' },
+  { id: 'supermercado', label: 'Supermercado' },
+  { id: 'manutencion', label: 'Manutención' },
+  { id: 'prestamos', label: 'Préstamos' },
+  { id: 'otro', label: 'Otro' }
+];
+
 export interface Gasto {
   id: string;
   descripcion: string;
   monto: number;
   tipo: TipoGasto;
+  categoria?: CategoriaGasto;
   fecha: Date;
-  categoria?: string;
 }
 
 export interface GastoBebeRef {
@@ -58,6 +75,8 @@ export interface CuentaReflejada {
   servicio: string;
   monto: number;
   pagada: boolean;
+  esFamiliar?: boolean;
+  titular?: string;
 }
 
 /**

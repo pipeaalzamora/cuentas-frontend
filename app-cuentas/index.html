@@ -4,7 +4,20 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>app-cuentas</title>
+    <meta name="theme-color" content="#6366F1" />
+    <title>App Cuentas</title>
+    <script>
+      // Aplica el tema guardado antes de pintar, para evitar parpadeo (FOUC).
+      (function () {
+        try {
+          var guardado = localStorage.getItem('tema-oscuro');
+          var oscuro = guardado !== null
+            ? JSON.parse(guardado)
+            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (oscuro) document.documentElement.classList.add('tema-oscuro');
+        } catch (e) { /* noop */ }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

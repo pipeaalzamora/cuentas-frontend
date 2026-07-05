@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import type { DesgloseSueldo, Gasto, TipoGasto, ResumenConsolidado } from '../tipos/desglosador';
+import type { DesgloseSueldo, Gasto, TipoGasto, CategoriaGasto, ResumenConsolidado } from '../tipos/desglosador';
+import { CATEGORIAS_GASTO } from '../tipos/desglosador';
 import { servicioDesglosadorSueldo } from '../servicios/desglosadorSueldo';
 import { desgloseSueldoAPI } from '../servicios/desgloseSueldoAPI';
 import { servicioGeneradorPDF } from '../servicios/generadorPDF';
@@ -53,6 +54,7 @@ const DesglosadorSueldo: React.FC = () => {
   const [descripcion, setDescripcion] = useState('');
   const [monto, setMonto] = useState('');
   const [tipo, setTipo] = useState<TipoGasto>('otro');
+  const [categoria, setCategoria] = useState<CategoriaGasto>('basicos');
 
   const cargarDesglosePorPeriodo = useCallback((mes: number, año: number, desgloses: DesgloseSueldo[]) => {
     const desglose = desgloses.find(d => d.mes === mes && d.año === año);
@@ -160,7 +162,8 @@ const DesglosadorSueldo: React.FC = () => {
       const nuevoGasto = {
         descripcion,
         monto: montoNum,
-        tipo
+        tipo,
+        categoria
       };
 
       await desgloseSueldoAPI.agregarGasto(desgloseActual.id, nuevoGasto);
@@ -168,6 +171,7 @@ const DesglosadorSueldo: React.FC = () => {
       setDescripcion('');
       setMonto('');
       setTipo('otro');
+      setCategoria('basicos');
       
       await cargarDesgloses();
       setMostrarFormGasto(false);
@@ -192,6 +196,7 @@ const DesglosadorSueldo: React.FC = () => {
     setDescripcion(gasto.descripcion);
     setMonto(formatearNumeroConPuntos(gasto.monto.toString()));
     setTipo(gasto.tipo);
+    setCategoria(gasto.categoria || 'basicos');
     setMostrarFormGasto(true);
   };
 
@@ -208,7 +213,8 @@ const DesglosadorSueldo: React.FC = () => {
       const gastoActualizado = {
         descripcion,
         monto: montoNum,
-        tipo
+        tipo,
+        categoria
       };
       await desgloseSueldoAPI.agregarGasto(desgloseActual.id, gastoActualizado);
       
@@ -217,6 +223,7 @@ const DesglosadorSueldo: React.FC = () => {
       setDescripcion('');
       setMonto('');
       setTipo('otro');
+      setCategoria('basicos');
       setGastoEditando(null);
       setMostrarFormGasto(false);
     } catch (error) {
@@ -228,6 +235,7 @@ const DesglosadorSueldo: React.FC = () => {
     setDescripcion('');
     setMonto('');
     setTipo('otro');
+    setCategoria('basicos');
     setGastoEditando(null);
     setMostrarFormGasto(false);
   };
@@ -478,6 +486,11 @@ const DesglosadorSueldo: React.FC = () => {
                     <span className={`reflejado-tag servicio-${cuenta.servicio}`}>
                       {NOMBRE_SERVICIO[cuenta.servicio] || cuenta.servicio}
                     </span>
+                    {cuenta.esFamiliar && (
+                      <span className="reflejado-familiar" title={cuenta.titular || 'Cuenta de familiar'}>
+                        👪 {cuenta.titular || 'Familiar'}
+                      </span>
+                    )}
                     {cuenta.pagada && <span className="reflejado-estado">Pagada</span>}
                   </div>
                   <span className="reflejado-monto">-{formatearPesosChilenos(cuenta.monto)}</span>
@@ -515,6 +528,11 @@ const DesglosadorSueldo: React.FC = () => {
                 <div key={gasto.id} className="gasto-item">
                   <div className="gasto-info">
                     <span className={`gasto-tipo tipo-${gasto.tipo}`}>{gasto.tipo}</span>
+                    {gasto.categoria && (
+                      <span className="gasto-categoria">
+                        {CATEGORIAS_GASTO.find(c => c.id === gasto.categoria)?.label || gasto.categoria}
+                      </span>
+                    )}
                     <span className="gasto-descripcion">{gasto.descripcion}</span>
                     <span className="gasto-fecha">
                       {gasto.fecha.toLocaleDateString()}
@@ -571,6 +589,17 @@ const DesglosadorSueldo: React.FC = () => {
                 placeholder="Ej: 50.000"
                 etiqueta="Monto"
               />
+              <label className="form-gasto__label">Categoría</label>
+              <select
+                value={categoria}
+                onChange={(e) => setCategoria(e.target.value as CategoriaGasto)}
+                className="select-tipo"
+              >
+                {CATEGORIAS_GASTO.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.label}</option>
+                ))}
+              </select>
+              <label className="form-gasto__label">Tipo</label>
               <select 
                 value={tipo} 
                 onChange={(e) => setTipo(e.target.value as TipoGasto)}

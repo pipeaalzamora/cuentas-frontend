@@ -117,7 +117,9 @@ class ServicioDesglosadorSueldo {
       id: c.id,
       servicio: c.servicio,
       monto: c.monto,
-      pagada: c.pagada
+      pagada: c.pagada,
+      esFamiliar: c.esFamiliar,
+      titular: c.titular
     }));
 
     const totalCuentas = cuentasReflejadas.reduce((sum, c) => sum + c.monto, 0);

@@ -128,15 +128,10 @@ interface ConfiguracionProviderProps {
 export const ConfiguracionProvider: React.FC<ConfiguracionProviderProps> = ({ children }) => {
   const [estado, dispatch] = useReducer(reducerConfiguracion, estadoInicial);
 
-  // Aplicar tema al documento
-  const aplicarTema = useCallback((temaOscuro: boolean): void => {
-    const root = document.documentElement;
-    if (temaOscuro) {
-      root.classList.add('tema-oscuro');
-    } else {
-      root.classList.remove('tema-oscuro');
-    }
-  }, []);
+  // NOTA: la aplicación del tema (clase .tema-oscuro en el documento) la maneja
+  // exclusivamente TemaContext, que es la única fuente de verdad y persiste la
+  // preferencia en localStorage['tema-oscuro']. Aquí NO se toca el DOM del tema
+  // para evitar que este contexto sobreescriba la preferencia al montar.
 
   // Cargar configuración desde el almacenamiento
   const cargarConfiguracion = useCallback(async (): Promise<void> => {
@@ -145,33 +140,24 @@ export const ConfiguracionProvider: React.FC<ConfiguracionProviderProps> = ({ ch
       
       const configuracion = servicioAlmacenamiento.obtenerConfiguracion();
       dispatch({ tipo: 'CARGAR_CONFIGURACION', payload: configuracion });
-      
-      // Aplicar tema inmediatamente
-      aplicarTema(configuracion.temaOscuro);
     } catch (error) {
       const mensaje = error instanceof Error ? error.message : 'Error al cargar la configuración';
       dispatch({ tipo: 'ESTABLECER_ERROR', payload: mensaje });
     }
-  }, [aplicarTema]);
+  }, []);
 
   // Actualizar configuración
   const actualizarConfiguracion = useCallback(async (nuevaConfiguracion: Partial<ConfiguracionUsuario>): Promise<ConfiguracionUsuario> => {
     try {
       const configuracionActualizada = servicioAlmacenamiento.actualizarConfiguracion(nuevaConfiguracion);
       dispatch({ tipo: 'ACTUALIZAR_CONFIGURACION', payload: nuevaConfiguracion });
-      
-      // Aplicar tema si cambió
-      if (nuevaConfiguracion.temaOscuro !== undefined) {
-        aplicarTema(nuevaConfiguracion.temaOscuro);
-      }
-      
       return configuracionActualizada;
     } catch (error) {
       const mensaje = error instanceof Error ? error.message : 'Error al actualizar la configuración';
       dispatch({ tipo: 'ESTABLECER_ERROR', payload: mensaje });
       throw error;
     }
-  }, [aplicarTema]);
+  }, []);
 
   // Alternar tema
   const alternarTema = useCallback(async (): Promise<void> => {
@@ -226,11 +212,6 @@ export const ConfiguracionProvider: React.FC<ConfiguracionProviderProps> = ({ ch
   useEffect(() => {
     cargarConfiguracion();
   }, [cargarConfiguracion]);
-
-  // Aplicar tema cuando cambie la configuración
-  useEffect(() => {
-    aplicarTema(estado.configuracion.temaOscuro);
-  }, [aplicarTema, estado.configuracion.temaOscuro]);
 
   // Valor del contexto
   const valorContexto: ContextoConfiguracion = {

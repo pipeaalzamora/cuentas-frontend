@@ -44,7 +44,7 @@ export const desgloseSueldoAPI = {
   },
 
   // Agregar un gasto
-  agregarGasto: async (id: string, gasto: { descripcion: string; monto: number; tipo: string }) => {
+  agregarGasto: async (id: string, gasto: { descripcion: string; monto: number; tipo: string; categoria?: string }) => {
     const response = await api.post(`/desglose-sueldo/${id}/gastos`, gasto);
     return response.data;
   },

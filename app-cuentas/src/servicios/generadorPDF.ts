@@ -533,7 +533,10 @@ export class ServicioGeneradorPDF {
           if (y > 270) { pdf.addPage(); y = 20; }
           const nombre = cuenta.servicio.charAt(0).toUpperCase() + cuenta.servicio.slice(1);
           const estado = cuenta.pagada ? ' (pagada)' : '';
-          pdf.text(`${nombre}${estado}`, 25, y);
+          const familiar = cuenta.esFamiliar
+            ? ` [familiar${cuenta.titular ? ': ' + cuenta.titular : ''}]`
+            : '';
+          pdf.text(`${nombre}${estado}${familiar}`, 25, y);
           pdf.text(formatearPesosChilenos(cuenta.monto), 150, y);
           y += 7;
         });
@@ -562,6 +565,35 @@ export class ServicioGeneradorPDF {
       pdf.text(`Gastado (consolidado): ${consolidado.porcentajeGastadoConsolidado.toFixed(1)}%`, 20, y);
     }
     
+    // Gastos por categoría (presupuesto)
+    const etiquetasCategoria: Record<string, string> = {
+      basicos: 'Gastos básicos',
+      arriendo: 'Arriendo',
+      supermercado: 'Supermercado',
+      manutencion: 'Manutención',
+      prestamos: 'Préstamos',
+      otro: 'Otro'
+    };
+    const gastosPorCategoria: Record<string, number> = {};
+    (desglose.gastos || []).forEach(g => {
+      const cat = g.categoria || 'otro';
+      gastosPorCategoria[cat] = (gastosPorCategoria[cat] || 0) + g.monto;
+    });
+    const categoriasConGasto = Object.entries(gastosPorCategoria).filter(([, m]) => m > 0);
+    if (categoriasConGasto.length > 0) {
+      y += 15;
+      if (y > 250) { pdf.addPage(); y = 20; }
+      pdf.setFontSize(14);
+      pdf.text('Gastos Propios por Categoría', 20, y);
+      y += 10;
+      pdf.setFontSize(11);
+      categoriasConGasto.forEach(([cat, monto]) => {
+        if (y > 270) { pdf.addPage(); y = 20; }
+        pdf.text(`${etiquetasCategoria[cat] || cat}: ${formatearPesosChilenos(monto)}`, 25, y);
+        y += 7;
+      });
+    }
+
     // Gastos por tipo
     y += 15;
     pdf.setFontSize(14);
@@ -597,7 +629,7 @@ export class ServicioGeneradorPDF {
         pdf.text(gasto.tipo, 180, y);
         y += 5;
         pdf.setFontSize(9);
-        pdf.text(fecha, 25, y);
+        pdf.text(gasto.categoria ? `${fecha} · ${gasto.categoria}` : fecha, 25, y);
         pdf.setFontSize(10);
         y += 8;
       });

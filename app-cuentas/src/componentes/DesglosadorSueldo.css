@@ -507,3 +507,30 @@
     font-family: var(--fuente-mono);
     margin-top: 0.15rem;
 }
+
+/* Categoría de gasto */
+.gasto-categoria {
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radio-sm);
+    font-size: var(--texto-xs);
+    font-weight: var(--peso-semibold);
+    background: var(--color-primario-light);
+    color: var(--color-primario);
+    text-transform: capitalize;
+}
+
+/* Etiqueta de cuenta familiar */
+.reflejado-familiar {
+    font-size: var(--texto-xs);
+    font-weight: var(--peso-medium);
+    color: var(--color-advertencia);
+    white-space: nowrap;
+}
+
+/* Etiqueta en el formulario de gasto */
+.form-gasto__label {
+    font-size: var(--texto-sm);
+    font-weight: var(--peso-medium);
+    color: var(--color-texto-secundario);
+    margin-bottom: -0.5rem;
+}

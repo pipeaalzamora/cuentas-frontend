@@ -103,6 +103,10 @@ const FormularioCuenta: React.FC<FormularioCuentaProps> = ({
   const [enviando, setEnviando] = useState(false);
   const [validacionTiempoReal, setValidacionTiempoReal] = useState(false);
 
+  // Titularidad de la cuenta (propia vs familiar) — estado propio, fuera de la validación zod
+  const [esFamiliar, setEsFamiliar] = useState<boolean>(cuentaInicial?.esFamiliar || false);
+  const [titular, setTitular] = useState<string>(cuentaInicial?.titular || '');
+
 
 
   // Validar campo individual
@@ -216,6 +220,8 @@ const FormularioCuenta: React.FC<FormularioCuentaProps> = ({
         // Actualizar cuenta existente
         const cuentaActualizada = await actualizarCuenta(cuentaInicial.id, {
           ...datosFormulario,
+          esFamiliar,
+          titular: esFamiliar ? titular.trim() : '',
           fechaActualizacion: new Date()
         });
         
@@ -229,7 +235,9 @@ const FormularioCuenta: React.FC<FormularioCuentaProps> = ({
           saldoAnterior: 0,
           consumoActual: datosFormulario.monto,
           otrosCargos: 0,
-          descuentos: 0
+          descuentos: 0,
+          esFamiliar,
+          titular: esFamiliar ? titular.trim() : ''
         };
         const nuevaCuenta = await agregarCuenta(datosAdaptados);
         
@@ -434,6 +442,33 @@ const FormularioCuenta: React.FC<FormularioCuentaProps> = ({
               </span>
             </label>
           </div>
+
+          {/* Titularidad: cuenta propia o de un familiar */}
+          <div className="formulario-cuenta__campo formulario-cuenta__campo--checkbox">
+            <label className="formulario-cuenta__checkbox-label">
+              <input
+                type="checkbox"
+                checked={esFamiliar}
+                onChange={(e) => setEsFamiliar(e.target.checked)}
+                className="formulario-cuenta__checkbox"
+                disabled={enviando}
+              />
+              <span className="formulario-cuenta__checkbox-texto">
+                Esta cuenta es de un familiar
+              </span>
+            </label>
+          </div>
+
+          {esFamiliar && (
+            <Input
+              etiqueta="¿De quién? (opcional)"
+              type="text"
+              value={titular}
+              onChange={(e) => setTitular(e.target.value)}
+              disabled={enviando}
+              placeholder="Ej: Tío Juan, Prima Ana"
+            />
+          )}
         </div>
       </div>
 
