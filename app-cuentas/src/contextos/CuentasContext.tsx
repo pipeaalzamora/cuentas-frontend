@@ -153,52 +153,22 @@ interface CuentasProviderProps {
 export const CuentasProvider: React.FC<CuentasProviderProps> = ({ children }) => {
   const [estado, dispatch] = useReducer(reducerCuentas, estadoInicial);
 
-  // Cargar cuentas desde el almacenamiento con validación de integridad
+  // Cargar cuentas desde el backend.
+  // IMPORTANTE: las cuentas viven en la base de datos (backend), NO en localStorage.
+  // Antes aquí se ejecutaba una "recuperación de integridad" heredada de la época
+  // en que se usaba localStorage; ante un fallo de validación borraba TODAS las
+  // cuentas del backend. Eso causaba pérdida de datos, por lo que se eliminó.
+  // La validación de integridad ahora solo registra advertencias, nunca borra datos.
   const cargarCuentas = async (): Promise<void> => {
     try {
       dispatch({ tipo: 'ESTABLECER_CARGANDO', payload: true });
-      
-      // Verificar integridad de datos antes de cargar
-      const integridad = await servicioAlmacenamiento.verificarIntegridad();
-      
-      if (!integridad.valido) {
-        console.warn('Problemas de integridad detectados:', integridad.errores);
-        ManejadorErrores.registrarError(
-          new Error('Problemas de integridad en datos almacenados'),
-          { errores: integridad.errores },
-          'medium'
-        );
-
-        // Intentar recuperación automática
-        const recuperacion = await ManejadorErrores.recuperarAlmacenamiento();
-        
-        if (!recuperacion.success) {
-          throw new Error(`Error de integridad: ${recuperacion.message}`);
-        }
-
-        if (recuperacion.dataLoss) {
-          dispatch({ 
-            tipo: 'ESTABLECER_ERROR', 
-            payload: 'Se detectaron problemas en los datos. Algunos datos pudieron perderse durante la recuperación.' 
-          });
-        }
-      }
 
       const cuentas = await servicioAlmacenamiento.obtenerCuentas();
-      
-      // Validar integridad de las cuentas cargadas
+
+      // Validación no destructiva: solo registra advertencias en consola/logs.
       const validacionCuentas = validarIntegridadCuentas(cuentas);
-      
       if (validacionCuentas.invalidas > 0) {
-        console.warn(`${validacionCuentas.invalidas} cuentas con problemas de integridad`);
-        ManejadorErrores.registrarError(
-          new Error('Cuentas con problemas de integridad detectadas'),
-          { 
-            invalidas: validacionCuentas.invalidas,
-            errores: validacionCuentas.errores 
-          },
-          'low'
-        );
+        console.warn(`${validacionCuentas.invalidas} cuentas con posibles problemas de integridad (no se borra nada)`);
       }
 
       dispatch({ tipo: 'CARGAR_CUENTAS', payload: cuentas });

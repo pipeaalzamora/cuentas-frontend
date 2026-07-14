@@ -172,14 +172,20 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   private manejarLimpiarDatos = (): void => {
-    if (window.confirm('¿Estás seguro de que quieres limpiar todos los datos? Esta acción no se puede deshacer.')) {
-      servicioAlmacenamiento.limpiarDatos().then(() => {
+    // Solo limpia el estado LOCAL del navegador (caché, logs, preferencias locales).
+    // NUNCA borra las cuentas ni otros datos del backend: esos viven en el servidor
+    // y no deben eliminarse por un error de la interfaz.
+    if (window.confirm('Esto reiniciará la app y limpiará datos locales del navegador (no borra tus cuentas del servidor). ¿Continuar?')) {
+      try {
         localStorage.removeItem('app-errors');
-        window.location.reload();
-      }).catch(error => {
-        console.error('Error al limpiar datos:', error);
-        alert('No se pudieron limpiar los datos. Intenta recargar la página.');
-      });
+        localStorage.removeItem('app-error-logs');
+        localStorage.removeItem('configuracion-usuario');
+        localStorage.removeItem('gestor-cuentas-servicios');
+        localStorage.removeItem('indicadores-economicos-cache');
+      } catch (error) {
+        console.error('Error al limpiar datos locales:', error);
+      }
+      window.location.reload();
     }
   };
 
@@ -232,7 +238,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   className="boton boton-outline boton-peligro"
                   onClick={this.manejarLimpiarDatos}
                 >
-                  Limpiar datos y reiniciar
+                  Limpiar caché local y reiniciar
                 </button>
               )}
             </div>

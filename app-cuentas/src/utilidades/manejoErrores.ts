@@ -97,17 +97,15 @@ export class ManejadorErrores {
         };
       }
 
-      // Intentar obtener datos raw del localStorage
+      // Intentar obtener datos raw del localStorage (esquema heredado)
       const datosRaw = localStorage.getItem('gestor-cuentas-servicios');
       
       if (!datosRaw) {
-        // No hay datos, crear estructura limpia
-        servicioAlmacenamiento.limpiarDatos();
+        // Los datos reales viven en el backend, NO en localStorage.
+        // Nunca borramos datos del servidor de forma automática.
         return {
           success: true,
-          message: 'Se creó una nueva estructura de datos limpia',
-          actions: ['Datos inicializados'],
-          dataLoss: true
+          message: 'No hay datos locales que recuperar (los datos están en el servidor).'
         };
       }
 
@@ -129,22 +127,11 @@ export class ManejadorErrores {
 
     } catch (error) {
       console.error('Error durante recuperación:', error);
-      
-      // Último recurso: limpiar todo
-      try {
-        servicioAlmacenamiento.limpiarDatos();
-        return {
-          success: true,
-          message: 'Se reinició la aplicación con datos limpios debido a errores irrecuperables',
-          actions: ['Datos reiniciados'],
-          dataLoss: true
-        };
-      } catch {
-        return {
-          success: false,
-          message: 'No se pudo recuperar la aplicación. Intenta limpiar manualmente los datos del navegador.'
-        };
-      }
+      // NO borramos datos del servidor automáticamente ante un error.
+      return {
+        success: false,
+        message: 'No se pudo completar la recuperación local. Los datos del servidor no se modificaron.'
+      };
     }
   }
 
